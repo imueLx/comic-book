@@ -1,0 +1,287 @@
+export type Character = "teacher" | "ana" | "ben" | "narrator" | "students";
+
+export interface DialogLine {
+  character: Character;
+  text: string;
+}
+
+export interface ComicPage {
+  pageNumber: number;
+  title: string;
+  background: string;
+  dialog: DialogLine[];
+  boardWords?: string[];
+  boardLabel?: string;
+  highlightPattern?: string;
+  isQuiz?: boolean;
+  quizSentence?: string;
+  quizAnswer?: string;
+  quizOptions?: string[];
+  isCover?: boolean;
+  isEnd?: boolean;
+  scene?: string;
+}
+
+export const comicPages: ComicPage[] = [
+  {
+    pageNumber: 1,
+    title: "The Word Pattern Adventure",
+    background: "bg-linear-to-b from-sky to-mint",
+    isCover: true,
+    scene: "cover",
+    dialog: [
+      {
+        character: "narrator",
+        text: "A comic story that helps Grade 3 learners read words correctly using word patterns.",
+      },
+    ],
+  },
+  {
+    pageNumber: 2,
+    title: "A New Reading Lesson",
+    background: "bg-linear-to-b from-lavender to-peach",
+    scene: "classroom",
+    dialog: [
+      {
+        character: "narrator",
+        text: "One morning in Grade 3, Teacher Mia prepared a fun reading lesson.",
+      },
+      {
+        character: "teacher",
+        text: "Today we will learn how word patterns help us read words correctly.",
+      },
+      {
+        character: "ana",
+        text: "What are word patterns?",
+      },
+      {
+        character: "ben",
+        text: "Are they like a reading trick?",
+      },
+    ],
+  },
+  {
+    pageNumber: 3,
+    title: "What Are Word Patterns?",
+    background: "bg-linear-to-b from-sky to-lavender",
+    scene: "classroom-board",
+    dialog: [
+      {
+        character: "teacher",
+        text: "Word patterns are groups of words that have the same ending sound.",
+      },
+      {
+        character: "ana",
+        text: "They all end with –at!",
+      },
+    ],
+    boardWords: ["Cat", "Bat", "Hat", "Mat"],
+    boardLabel: "Word Patterns",
+    highlightPattern: "at",
+  },
+  {
+    pageNumber: 4,
+    title: "The –at Word Family",
+    background: "bg-linear-to-b from-mint to-sky",
+    scene: "reading",
+    dialog: [
+      {
+        character: "teacher",
+        text: "Yes! This is called the –at word family.",
+      },
+      {
+        character: "ben",
+        text: "If I know –at, I can read many words!",
+      },
+      {
+        character: "students",
+        text: "Cat! Bat! Hat! Mat!",
+      },
+    ],
+    boardWords: ["Cat", "Bat", "Hat", "Mat"],
+    highlightPattern: "at",
+  },
+  {
+    pageNumber: 5,
+    title: "Reading Sentences",
+    background: "bg-linear-to-b from-peach to-pink",
+    scene: "classroom",
+    dialog: [
+      {
+        character: "teacher",
+        text: "Let's read a sentence.",
+      },
+      {
+        character: "students",
+        text: "The cat sat on the mat.",
+      },
+      {
+        character: "ana",
+        text: "That was easy!",
+      },
+      {
+        character: "teacher",
+        text: "Word patterns help us read faster.",
+      },
+    ],
+    highlightPattern: "at",
+  },
+  {
+    pageNumber: 6,
+    title: "Another Word Family",
+    background: "bg-linear-to-b from-lavender to-mint",
+    scene: "classroom-board",
+    dialog: [
+      {
+        character: "teacher",
+        text: "Let's learn another word pattern.",
+      },
+      {
+        character: "ben",
+        text: "These words end with –an!",
+      },
+      {
+        character: "students",
+        text: "Fan! Man! Pan!",
+      },
+    ],
+    boardWords: ["Fan", "Man", "Pan"],
+    boardLabel: "New Pattern!",
+    highlightPattern: "an",
+  },
+  {
+    pageNumber: 7,
+    title: "Practice Time",
+    background: "bg-linear-to-b from-sky to-peach",
+    scene: "practice",
+    dialog: [
+      {
+        character: "teacher",
+        text: "Now let's practice.",
+      },
+      {
+        character: "ana",
+        text: "Ran!",
+      },
+      {
+        character: "ben",
+        text: "Van!",
+      },
+      {
+        character: "students",
+        text: "Can!",
+      },
+      {
+        character: "teacher",
+        text: "Excellent reading!",
+      },
+    ],
+    boardWords: ["Ran", "Van", "Can"],
+    highlightPattern: "an",
+  },
+  {
+    pageNumber: 8,
+    title: "Short Vowel Words",
+    background: "bg-linear-to-b from-pink to-lavender",
+    scene: "classroom-board",
+    dialog: [
+      {
+        character: "teacher",
+        text: "Short vowels also help us read words.",
+      },
+      {
+        character: "ana",
+        text: "Pig! Pen!",
+      },
+      {
+        character: "ben",
+        text: "Cup! Bed!",
+      },
+    ],
+    boardWords: ["Pig", "Pen", "Cup", "Bed"],
+    boardLabel: "Short Vowels",
+  },
+  {
+    pageNumber: 9,
+    title: "Blends",
+    background: "bg-linear-to-b from-mint to-lavender",
+    scene: "classroom-board",
+    dialog: [
+      {
+        character: "teacher",
+        text: "Sometimes letters work together. These are called blends.",
+      },
+      {
+        character: "students",
+        text: "Ship! Brush! Frog!",
+      },
+    ],
+    boardWords: ["sh → Ship", "br → Brush", "fr → Frog"],
+    boardLabel: "Blends",
+  },
+  {
+    pageNumber: 10,
+    title: "Using Context Clues",
+    background: "bg-linear-to-b from-peach to-sky",
+    scene: "quiz",
+    isQuiz: true,
+    quizSentence: "The frog can ___.",
+    quizAnswer: "Hop",
+    quizOptions: ["Hop", "Sit", "Fly"],
+    dialog: [
+      {
+        character: "teacher",
+        text: "Now read the sentence and choose the correct word.",
+      },
+      {
+        character: "ana",
+        text: "Hop!",
+      },
+      {
+        character: "ben",
+        text: "The word hop makes sense.",
+      },
+    ],
+  },
+  {
+    pageNumber: 11,
+    title: "Reading is Fun!",
+    background: "bg-linear-to-b from-sky to-mint",
+    scene: "happy",
+    dialog: [
+      {
+        character: "narrator",
+        text: "The students were happy because reading became easier.",
+      },
+      {
+        character: "ana",
+        text: "Word patterns help us read new words.",
+      },
+      {
+        character: "ben",
+        text: "Reading is fun!",
+      },
+      {
+        character: "teacher",
+        text: "Keep practicing every day.",
+      },
+    ],
+  },
+  {
+    pageNumber: 12,
+    title: "The End",
+    background: "bg-linear-to-b from-sun to-pink",
+    scene: "celebration",
+    isEnd: true,
+    dialog: [
+      {
+        character: "narrator",
+        text: "Ana and Ben became better readers because they learned word patterns.",
+      },
+      {
+        character: "students",
+        text: "Hooray for reading!",
+      },
+    ],
+  },
+];
