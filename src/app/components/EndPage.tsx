@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CelebrationIllustration } from "./SceneIllustration";
+import { EndIllustration } from "./ComicIllustration";
 
 export default function EndPage() {
   return (
@@ -27,7 +27,7 @@ export default function EndPage() {
       </motion.h2>
 
       {/* Celebration Illustration */}
-      <CelebrationIllustration />
+      <EndIllustration />
 
       <motion.div
         initial={{ opacity: 0 }}
@@ -63,9 +63,8 @@ export default function EndPage() {
             animate={{ y: [0, -15, 0] }}
             transition={{
               delay: i * 0.15,
-              duration: 0.8,
-              repeat: Infinity,
-              repeatDelay: 0.5,
+              duration: 1.2,
+              repeat: 3,
             }}
           >
             {emoji}
@@ -105,22 +104,21 @@ export default function EndPage() {
 
       {/* Confetti stars */}
       <div className="flex gap-2 mt-6">
-        {Array.from({ length: 8 }).map((_, i) => (
+        {Array.from({ length: 5 }).map((_, i) => (
           <motion.span
             key={i}
             className="text-2xl"
             animate={{
-              y: [0, -20, 0],
-              rotate: [0, 360],
-              opacity: [1, 0.5, 1],
+              y: [0, -15, 0],
+              opacity: [1, 0.6, 1],
             }}
             transition={{
               delay: i * 0.1,
               duration: 2,
-              repeat: Infinity,
+              repeat: 2,
             }}
           >
-            {["⭐", "🌟", "💫", "✨"][i % 4]}
+            {["⭐", "🌟", "💫", "✨", "⭐"][i]}
           </motion.span>
         ))}
       </div>

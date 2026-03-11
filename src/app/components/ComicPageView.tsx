@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ComicPage } from "../data/comicPages";
 import SpeechBubble from "./SpeechBubble";
@@ -8,6 +8,7 @@ import Chalkboard from "./Chalkboard";
 import Quiz from "./Quiz";
 import { TomTheCat } from "./CharacterAvatar";
 import SceneIllustration from "./SceneIllustration";
+import ComicIllustration from "./ComicIllustration";
 import {
   narrateAllDialog,
   stopSpeaking,
@@ -60,6 +61,7 @@ export default function ComicPageView({ page }: ComicPageViewProps) {
   const [isReading, setIsReading] = useState(false);
   const [activeLineIndex, setActiveLineIndex] = useState(-1);
   const [speechOk, setSpeechOk] = useState(true);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setSpeechOk(isSpeechSupported());
@@ -89,6 +91,39 @@ export default function ComicPageView({ page }: ComicPageViewProps) {
       setActiveLineIndex(-1);
     }
   }, [isReading, page.dialog]);
+
+  const handleDownloadPanel = useCallback(() => {
+    const panel = panelRef.current;
+    if (!panel) return;
+    const svg = panel.querySelector("svg");
+    if (!svg) return;
+
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    canvas.width = 800;
+    canvas.height = 440;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const img = new Image();
+    img.onload = () => {
+      ctx.fillStyle = "#FFFEF5";
+      ctx.fillRect(0, 0, 800, 440);
+      ctx.drawImage(img, 0, 0, 800, 440);
+
+      // Add page label
+      ctx.font = "bold 18px sans-serif";
+      ctx.fillStyle = "#374151";
+      ctx.textAlign = "center";
+      ctx.fillText(`Page ${page.pageNumber} — ${page.title}`, 400, 430);
+
+      const link = document.createElement("a");
+      link.download = `comic-page-${page.pageNumber}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    };
+    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgData);
+  }, [page.pageNumber, page.title]);
 
   const showTom = page.pageNumber === 4 || page.pageNumber === 1;
   const sceneKey = page.scene || "classroom";
@@ -146,7 +181,10 @@ export default function ComicPageView({ page }: ComicPageViewProps) {
       </motion.div>
 
       {/* Comic Panel */}
-      <div className="comic-panel w-full max-w-2xl p-3 sm:p-6 relative comic-scene-frame">
+      <div
+        ref={panelRef}
+        className="comic-panel w-full max-w-2xl p-3 sm:p-6 relative comic-scene-frame"
+      >
         <div className="comic-speed-lines" />
         <span className="page-badge">
           #{String(page.pageNumber).padStart(2, "0")}
@@ -159,8 +197,16 @@ export default function ComicPageView({ page }: ComicPageViewProps) {
           ⭐
         </span>
 
-        {/* Scene Illustration Panel */}
-        <SceneIllustration scene={sceneKey} className="mb-3 sm:mb-4" />
+        {/* Scene Illustration Panel - page-specific */}
+        <ComicIllustration
+          pageNumber={page.pageNumber}
+          className="mb-3 sm:mb-4"
+        />
+
+        {/* Fallback generic scene if no page-specific illustration */}
+        {![2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].includes(page.pageNumber) && (
+          <SceneIllustration scene={sceneKey} className="mb-3 sm:mb-4" />
+        )}
 
         {/* Read Aloud Button */}
         {speechOk && (
@@ -272,6 +318,18 @@ export default function ComicPageView({ page }: ComicPageViewProps) {
             ✅ Quiz complete! Click Next to continue.
           </motion.div>
         )}
+
+        {/* Download panel button */}
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleDownloadPanel}
+          className="mt-4 mx-auto flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold bg-gray-100 text-gray-700 cursor-pointer border-2 border-gray-300 active:bg-gray-200 min-h-11"
+        >
+          <span>📥</span> Save This Page
+        </motion.button>
       </div>
     </div>
   );

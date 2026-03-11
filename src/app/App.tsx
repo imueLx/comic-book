@@ -31,7 +31,6 @@ import ComicReaderScreen from "./components/screens/ComicReaderScreen";
 import ComicBookApp from "./ComicBookApp";
 import ActivityScreen from "./components/screens/ActivityScreen";
 import ProgressScreen from "./components/screens/ProgressScreen";
-import TeacherDashboard from "./components/screens/TeacherDashboard";
 import SettingsScreen from "./components/screens/SettingsScreen";
 
 export default function App() {
@@ -242,7 +241,6 @@ export default function App() {
               onReadComic={() => setScreen("comicBook")}
               onViewProgress={() => setScreen("progress")}
               onViewSettings={() => setScreen("settings")}
-              onViewTeacherDashboard={() => setScreen("teacherDashboard")}
             />
           )}
 
@@ -275,10 +273,6 @@ export default function App() {
               profile={profile}
               onBack={() => setScreen("home")}
             />
-          )}
-
-          {screen === "teacherDashboard" && (
-            <TeacherDashboard onBack={() => setScreen("home")} />
           )}
 
           {screen === "settings" && (

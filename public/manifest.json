@@ -1,7 +1,7 @@
 {
   "name": "The Word Pattern Adventure",
   "short_name": "Word Adventure",
-  "description": "A fun educational app for Grade 3 learners to master word patterns through comics and activities",
+  "description": "A fun educational comic app for Grade 3 learners to master word patterns through interactive comics, quizzes, and activities",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#E0E7FF",
@@ -9,7 +9,10 @@
   "orientation": "portrait",
   "id": "/",
   "scope": "/",
-  "categories": ["education", "kids"],
+  "categories": ["education", "kids", "books"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icon.svg",

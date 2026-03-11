@@ -8,6 +8,7 @@ import EndPage from "./components/EndPage";
 import ComicPageView from "./components/ComicPageView";
 import Navigation from "./components/Navigation";
 import ProgressBar from "./components/ProgressBar";
+import Confetti from "./components/Confetti";
 
 interface ComicBookAppProps {
   onBack?: () => void;
@@ -15,6 +16,7 @@ interface ComicBookAppProps {
 
 export default function ComicBookApp({ onBack }: ComicBookAppProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [showCompletion, setShowCompletion] = useState(false);
   const totalPages = comicPages.length;
   const page = comicPages[currentPage - 1];
 
@@ -75,9 +77,9 @@ export default function ComicBookApp({ onBack }: ComicBookAppProps) {
             <div className="flex items-center gap-1 sm:gap-2">
               {onBack && (
                 <motion.button
-                  whileTap={{ scale: 0.9 }}
+                  whileTap={{ scale: 0.93 }}
                   onClick={onBack}
-                  className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-sm cursor-pointer"
+                  className="w-11 h-11 rounded-xl bg-gray-100 flex items-center justify-center text-lg cursor-pointer active:bg-gray-200"
                 >
                   ←
                 </motion.button>
@@ -110,12 +112,11 @@ export default function ComicBookApp({ onBack }: ComicBookAppProps) {
         <AnimatePresence mode="wait">
           <motion.div
             key={currentPage}
-            initial={{ opacity: 0, x: 70, rotateY: 18, scale: 0.98 }}
-            animate={{ opacity: 1, x: 0, rotateY: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -70, rotateY: -18, scale: 0.98 }}
-            transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-            style={{ transformOrigin: "center" }}
-            className="w-full comic-page-wrapper comic-page-fold"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="w-full comic-page-wrapper"
           >
             {page.isCover ? (
               <CoverPage />
@@ -136,12 +137,95 @@ export default function ComicBookApp({ onBack }: ComicBookAppProps) {
             totalPages={totalPages}
             onPrev={goPrev}
             onNext={goNext}
+            onDone={() => setShowCompletion(true)}
           />
           <p className="text-center text-[10px] sm:text-xs text-gray-400 mt-1 sm:mt-2">
             Swipe or use buttons to navigate
           </p>
         </div>
       </footer>
+
+      {/* Completion celebration overlay */}
+      <AnimatePresence>
+        {showCompletion && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          >
+            <Confetti show={showCompletion} />
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 200, damping: 18 }}
+              className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl mx-4"
+            >
+              <motion.div
+                className="text-6xl mb-3"
+                animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 0.8, repeat: 2 }}
+              >
+                🏆
+              </motion.div>
+              <h2
+                className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2"
+                style={{
+                  fontFamily:
+                    "var(--font-comic), var(--font-baloo), sans-serif",
+                }}
+              >
+                Amazing Job! 🎉
+              </h2>
+              <p className="text-gray-600 mb-2 text-base">
+                You finished the entire comic book!
+              </p>
+              <p className="text-sm text-gray-500 mb-6">
+                You read all 12 pages of &quot;The Word Pattern Adventure&quot;
+                — you&apos;re a reading superstar!
+              </p>
+
+              <div className="flex gap-3 mb-3">
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setShowCompletion(false);
+                    setCurrentPage(1);
+                  }}
+                  className="flex-1 py-3.5 rounded-2xl bg-gray-100 font-extrabold text-gray-700 text-base cursor-pointer min-h-13 active:bg-gray-200"
+                >
+                  📖 Read Again
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setShowCompletion(false);
+                    onBack?.();
+                  }}
+                  className="flex-1 py-3.5 rounded-2xl bg-linear-to-b from-emerald-400 to-emerald-600 font-extrabold text-white text-base cursor-pointer min-h-13 shadow-md active:from-emerald-500 active:to-emerald-700"
+                >
+                  ✅ Done!
+                </motion.button>
+              </div>
+
+              <div className="flex justify-center gap-1">
+                {["⭐", "🌟", "⭐", "🌟", "⭐"].map((star, i) => (
+                  <motion.span
+                    key={i}
+                    className="text-2xl"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + i * 0.1 }}
+                  >
+                    {star}
+                  </motion.span>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

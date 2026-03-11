@@ -877,15 +877,50 @@ h4,
 button {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  transition:
-    transform 0.18s ease,
-    filter 0.2s ease,
-    box-shadow 0.2s ease,
-    background-color 0.2s ease;
 }
 
 button:active {
   filter: brightness(0.97);
+}
+
+/* ── Performance: reduce motion & GPU hints for low-end mobile ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Promote layered/animated containers to GPU */
+.comic-page-wrapper,
+.comic-panel,
+.app-header {
+  will-change: transform;
+  contain: layout style;
+}
+
+/* Content visibility for off-screen sections */
+.comic-dialog-grid > * {
+  content-visibility: auto;
+}
+
+/* Limit expensive paint on mobile */
+@media (max-width: 640px) {
+  .comic-burst {
+    display: none;
+  }
+
+  .comic-speed-lines {
+    display: none;
+  }
+
+  .sticker-bolt,
+  .sticker-star {
+    display: none;
+  }
 }
 
 /* Safe area support for notched phones */

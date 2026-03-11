@@ -13,7 +13,6 @@ interface HomeScreenProps {
   onReadComic: () => void;
   onViewProgress: () => void;
   onViewSettings: () => void;
-  onViewTeacherDashboard: () => void;
 }
 
 export default function HomeScreen({
@@ -22,7 +21,6 @@ export default function HomeScreen({
   onReadComic,
   onViewProgress,
   onViewSettings,
-  onViewTeacherDashboard,
 }: HomeScreenProps) {
   const currentLesson =
     lessons.find((l) => l.id === profile.currentLesson) || lessons[0];
@@ -278,7 +276,7 @@ export default function HomeScreen({
       </div>
 
       {/* Bottom navigation */}
-      <nav className="bottom-nav fixed bottom-0 left-0 right-0 px-6 py-2 safe-bottom z-20">
+      <nav className="bottom-nav fixed bottom-0 left-0 right-0 px-4 py-2.5 safe-bottom z-20">
         <div className="max-w-lg mx-auto flex items-center justify-around">
           {[
             { icon: "🏠", label: "Home", active: true, action: () => {} },
@@ -287,12 +285,6 @@ export default function HomeScreen({
               label: "Progress",
               active: false,
               action: onViewProgress,
-            },
-            {
-              icon: "👩‍🏫",
-              label: "Teacher",
-              active: false,
-              action: onViewTeacherDashboard,
             },
             {
               icon: "⚙️",
@@ -305,17 +297,15 @@ export default function HomeScreen({
               key={tab.label}
               whileTap={{ scale: 0.9 }}
               onClick={tab.action}
-              className={`flex flex-col items-center gap-0.5 py-1.5 px-3 rounded-xl min-w-15 cursor-pointer transition-colors ${
+              className={`flex flex-col items-center gap-0.5 py-2 px-4 rounded-xl min-w-16 min-h-13 cursor-pointer ${
                 tab.active ? "text-violet-600" : "text-gray-400"
               }`}
             >
-              <span
-                className={`text-xl ${tab.active ? "scale-110" : ""} transition-transform`}
-              >
+              <span className={`text-2xl ${tab.active ? "scale-110" : ""}`}>
                 {tab.icon}
               </span>
               <span
-                className={`text-[10px] font-bold ${tab.active ? "text-violet-600" : "text-gray-400"}`}
+                className={`text-[11px] font-bold ${tab.active ? "text-violet-600" : "text-gray-400"}`}
               >
                 {tab.label}
               </span>

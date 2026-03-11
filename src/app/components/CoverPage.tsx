@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import CharacterAvatar, { TomTheCat } from "./CharacterAvatar";
-import { CoverSceneIllustration } from "./SceneIllustration";
+import { CoverIllustration } from "./ComicIllustration";
 
 export default function CoverPage() {
   return (
@@ -24,7 +24,7 @@ export default function CoverPage() {
       </motion.div>
 
       {/* Scene Illustration */}
-      <CoverSceneIllustration />
+      <CoverIllustration />
 
       {/* Characters */}
       <motion.div

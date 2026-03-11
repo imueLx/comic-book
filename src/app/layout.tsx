@@ -23,8 +23,25 @@ const bangers = Bangers({
 export const metadata: Metadata = {
   title: "The Word Pattern Adventure",
   description:
-    "A fun educational app for Grade 3 learners to master word patterns through comics and activities.",
+    "A fun educational comic app for Grade 3 learners to master word patterns through interactive comics, quizzes, and activities.",
   manifest: "/manifest.json",
+  keywords: [
+    "educational",
+    "comic book",
+    "grade 3",
+    "word patterns",
+    "reading",
+    "phonics",
+    "kids learning app",
+  ],
+  authors: [{ name: "Word Pattern Adventure Team" }],
+  openGraph: {
+    title: "The Word Pattern Adventure",
+    description:
+      "Read an interactive comic and learn word patterns! For Grade 3 learners.",
+    type: "website",
+    siteName: "The Word Pattern Adventure",
+  },
 };
 
 export default function RootLayout({
@@ -46,6 +63,10 @@ export default function RootLayout({
           content="black-translucent"
         />
         <meta name="theme-color" content="#7C3AED" />
+        <meta
+          name="description"
+          content="A fun educational comic app for Grade 3 learners to master word patterns through interactive comics, quizzes, and activities."
+        />
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
       </head>

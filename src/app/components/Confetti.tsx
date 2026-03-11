@@ -8,9 +8,9 @@ interface ConfettiProps {
   duration?: number;
 }
 
-const particles = Array.from({ length: 30 }, (_, i) => ({
+const particles = Array.from({ length: 18 }, (_, i) => ({
   id: i,
-  emoji: ["⭐", "🌟", "✨", "💫", "🎉", "🎊", "❤️", "💛", "💚", "💜"][i % 10],
+  emoji: ["⭐", "🌟", "✨", "🎉", "🎊", "❤️", "💛", "💚", "💜"][i % 9],
   x: Math.random() * 100,
   delay: Math.random() * 0.5,
   duration: 1.5 + Math.random() * 1.5,
