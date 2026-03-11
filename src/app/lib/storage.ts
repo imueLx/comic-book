@@ -2,7 +2,12 @@
 // localStorage-based Progress Storage
 // ============================================
 
-import { LearnerProfile, LessonProgress, AppSettings } from "./types";
+import {
+  LearnerProfile,
+  LessonProgress,
+  AppSettings,
+  SkillArea,
+} from "./types";
 
 const STORAGE_KEY = "wordPatternAdventure";
 
@@ -11,6 +16,7 @@ const defaultSettings: AppSettings = {
   audioEnabled: true,
   autoRead: false,
   theme: "light",
+  playbackSpeed: "normal",
 };
 
 function createDefaultProfile(name: string, avatar: string): LearnerProfile {
@@ -106,6 +112,7 @@ export function saveLessonProgress(
     lessonId,
     comicPagesRead: [],
     activitiesCompleted: [],
+    activityResults: [],
     stars: 0,
     completed: false,
     timeSpentSeconds: 0,
@@ -117,14 +124,21 @@ export function saveLessonProgress(
     ...update,
     lastAccessed: new Date().toISOString(),
     comicPagesRead: Array.from(
-      new Set([...existing.comicPagesRead, ...(update.comicPagesRead || [])]),
+      new Set([
+        ...(existing.comicPagesRead || []),
+        ...(update.comicPagesRead || []),
+      ]),
     ),
     activitiesCompleted: Array.from(
       new Set([
-        ...existing.activitiesCompleted,
+        ...(existing.activitiesCompleted || []),
         ...(update.activitiesCompleted || []),
       ]),
     ),
+    activityResults: [
+      ...(existing.activityResults || []),
+      ...(update.activityResults || []),
+    ],
   };
 
   profile.progress[lessonId] = merged;
@@ -199,4 +213,56 @@ export function awardBadge(profileId: string, badgeId: string) {
     profile.badges.push(badgeId);
     updateProfile(profile);
   }
+}
+
+// --- Skill Analysis ---
+
+export interface SkillReport {
+  skill: SkillArea;
+  label: string;
+  total: number;
+  correct: number;
+  accuracy: number;
+  needsReview: boolean;
+}
+
+const skillLabels: Record<SkillArea, string> = {
+  wordFamily_at: "–at Word Family",
+  wordFamily_an: "–an Word Family",
+  shortVowels: "Short Vowel Words",
+  blends: "Blends (sh, br, fr)",
+  contextClues: "Context Clues",
+  sentenceReading: "Sentence Reading",
+};
+
+export function getSkillAnalysis(profileId: string): SkillReport[] {
+  const profile = getProfile(profileId);
+  if (!profile) return [];
+
+  const skillMap: Record<string, { total: number; correct: number }> = {};
+  for (const skill of Object.keys(skillLabels)) {
+    skillMap[skill] = { total: 0, correct: 0 };
+  }
+
+  for (const lp of Object.values(profile.progress)) {
+    for (const result of lp.activityResults || []) {
+      if (result.skillArea && skillMap[result.skillArea]) {
+        skillMap[result.skillArea].total += 1;
+        if (result.correct) skillMap[result.skillArea].correct += 1;
+      }
+    }
+  }
+
+  return (Object.keys(skillLabels) as SkillArea[]).map((skill) => {
+    const data = skillMap[skill];
+    const accuracy = data.total > 0 ? data.correct / data.total : 0;
+    return {
+      skill,
+      label: skillLabels[skill],
+      total: data.total,
+      correct: data.correct,
+      accuracy: Math.round(accuracy * 100),
+      needsReview: data.total > 0 && accuracy < 0.7,
+    };
+  });
 }

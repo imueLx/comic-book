@@ -11,7 +11,7 @@ export default function CoverPage() {
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-2xl sm:text-5xl md:text-6xl font-extrabold text-purple-800 mb-1 sm:mb-2 drop-shadow-lg"
+        className="text-2xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 mb-1 sm:mb-2 drop-shadow-lg"
       >
         ✨ The Word Pattern ✨
       </motion.h1>
@@ -19,7 +19,7 @@ export default function CoverPage() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="text-2xl sm:text-5xl md:text-6xl font-extrabold text-pink-600 mb-4 sm:mb-8 drop-shadow-lg"
+        className="text-2xl sm:text-5xl md:text-6xl font-extrabold text-violet-600 mb-4 sm:mb-8 drop-shadow-lg"
       >
         Adventure
       </motion.h1>
@@ -65,9 +65,9 @@ export default function CoverPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7, duration: 0.5 }}
-        className="bg-white/80 rounded-2xl px-4 sm:px-8 py-3 sm:py-4 border-2 sm:border-3 border-purple-300 shadow-lg max-w-lg mx-2"
+        className="app-card px-4 sm:px-8 py-3 sm:py-4 max-w-lg mx-2"
       >
-        <p className="text-sm sm:text-lg text-purple-700">
+        <p className="text-sm sm:text-lg text-gray-600">
           📚 A comic story that helps <strong>Grade 3</strong> learners read
           words correctly using <strong>word patterns</strong>.
         </p>

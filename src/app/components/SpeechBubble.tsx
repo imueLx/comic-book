@@ -39,7 +39,7 @@ function highlightWords(
           return (
             <span key={i}>
               <motion.span
-                className="word-highlight bg-yellow-300 text-purple-900 rounded-lg"
+                className="word-highlight bg-amber-200 text-gray-900 rounded-lg"
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 1.4 }}
                 onClick={() => onWordClick?.(word)}

@@ -10,6 +10,7 @@ export type Screen =
   | "profile"
   | "home"
   | "lessonMap"
+  | "comicBook"
   | "comicReader"
   | "activity"
   | "results"
@@ -69,6 +70,10 @@ export interface Activity {
   word?: string;
   // matchWords
   pairs?: { word: string; match: string }[];
+  // hint for wrong answers
+  hint?: string;
+  // skill area this activity covers
+  skillArea?: SkillArea;
 }
 
 export interface Lesson {
@@ -87,6 +92,7 @@ export interface LessonProgress {
   lessonId: number;
   comicPagesRead: number[];
   activitiesCompleted: string[];
+  activityResults: ActivityResult[];
   stars: number; // 0-3
   completed: boolean;
   timeSpentSeconds: number;
@@ -119,11 +125,20 @@ export interface LearnerProfile {
   settings: AppSettings;
 }
 
+export type SkillArea =
+  | "wordFamily_at"
+  | "wordFamily_an"
+  | "shortVowels"
+  | "blends"
+  | "contextClues"
+  | "sentenceReading";
+
 export interface AppSettings {
   textSize: "small" | "medium" | "large";
   audioEnabled: boolean;
   autoRead: boolean;
   theme: "light" | "dark";
+  playbackSpeed: "slow" | "normal";
 }
 
 export interface ActivityResult {
@@ -131,4 +146,5 @@ export interface ActivityResult {
   correct: boolean;
   attempts: number;
   timeSpentSeconds: number;
+  skillArea?: SkillArea;
 }

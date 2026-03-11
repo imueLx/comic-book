@@ -27,58 +27,68 @@ export default function ProgressScreen({
   const lockedBadges = badges.filter((b) => !profile.badges.includes(b.id));
 
   return (
-    <div className="min-h-dvh bg-linear-to-b from-mint to-lavender flex flex-col">
+    <div className="app-shell min-h-dvh flex flex-col">
       {/* Header */}
-      <header className="bg-white/70 backdrop-blur-sm border-b-2 border-purple-300 py-2 px-3 sticky top-0 z-10 safe-top">
+      <header className="app-header py-3 px-4 sticky top-0 z-10 safe-top">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={onBack}
-            className="text-sm font-bold text-purple-600 min-h-9 cursor-pointer"
+            className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-sm cursor-pointer"
           >
-            ← Back
+            ←
           </motion.button>
-          <h2 className="text-base font-extrabold text-purple-800">
-            My Progress 📊
+          <h2 className="text-base font-extrabold text-gray-900">
+            My Progress
           </h2>
-          <div className="w-12" />
+          <div className="w-9" />
         </div>
       </header>
 
-      <div className="flex-1 px-3 py-4 max-w-lg mx-auto w-full space-y-4 pb-20">
-        {/* Stats summary */}
+      <div className="flex-1 px-4 py-4 max-w-lg mx-auto w-full space-y-4 pb-8 overflow-y-auto">
+        {/* Profile card with stats */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/90 rounded-2xl p-4 shadow-md border-2 border-purple-200"
+          className="app-card p-5"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-3xl">{profile.avatar}</span>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center border-2 border-violet-200 shadow-sm">
+              <span className="text-3xl">{profile.avatar}</span>
+            </div>
             <div>
-              <h3 className="font-extrabold text-purple-800">{profile.name}</h3>
-              <p className="text-xs text-purple-500">
+              <h3 className="font-extrabold text-gray-900 text-lg">
+                {profile.name}
+              </h3>
+              <p className="text-xs text-gray-500 font-semibold">
                 🔥 {profile.streak} day streak
               </p>
             </div>
           </div>
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-purple-50 rounded-xl p-2 text-center">
-              <p className="text-2xl font-extrabold text-purple-800">
+            <div className="bg-gradient-to-b from-violet-50 to-purple-50 rounded-2xl p-3 text-center">
+              <p className="text-2xl font-extrabold text-violet-700">
                 {completedLessons}
               </p>
-              <p className="text-[10px] text-purple-500">Lessons</p>
+              <p className="text-[10px] text-violet-500 font-bold uppercase tracking-wider">
+                Lessons
+              </p>
             </div>
-            <div className="bg-yellow-50 rounded-xl p-2 text-center">
-              <p className="text-2xl font-extrabold text-yellow-700">
+            <div className="bg-gradient-to-b from-amber-50 to-yellow-50 rounded-2xl p-3 text-center">
+              <p className="text-2xl font-extrabold text-amber-600">
                 {totalStars}
               </p>
-              <p className="text-[10px] text-yellow-600">Stars</p>
+              <p className="text-[10px] text-amber-500 font-bold uppercase tracking-wider">
+                Stars
+              </p>
             </div>
-            <div className="bg-pink-50 rounded-xl p-2 text-center">
-              <p className="text-2xl font-extrabold text-pink-700">
+            <div className="bg-gradient-to-b from-pink-50 to-rose-50 rounded-2xl p-3 text-center">
+              <p className="text-2xl font-extrabold text-pink-600">
                 {earnedBadges.length}
               </p>
-              <p className="text-[10px] text-pink-600">Badges</p>
+              <p className="text-[10px] text-pink-500 font-bold uppercase tracking-wider">
+                Badges
+              </p>
             </div>
           </div>
         </motion.div>
@@ -88,12 +98,12 @@ export default function ProgressScreen({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white/90 rounded-2xl p-4 shadow-md border-2 border-purple-200"
+          className="app-card p-5"
         >
-          <h3 className="font-extrabold text-purple-800 mb-3">
-            Lesson Progress 📚
+          <h3 className="font-extrabold text-gray-900 mb-3 flex items-center gap-2">
+            📚 Lesson Progress
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {lessons.map((lesson) => {
               const progress = profile.progress[lesson.id];
               const isCompleted = progress?.completed;
@@ -102,23 +112,29 @@ export default function ProgressScreen({
               return (
                 <div
                   key={lesson.id}
-                  className="flex items-center gap-3 bg-purple-50/60 rounded-xl p-2.5"
+                  className="flex items-center gap-3 bg-gray-50 rounded-2xl p-3"
                 >
-                  <span className="text-xl">{lesson.icon}</span>
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg ${
+                      isCompleted ? "bg-emerald-100" : "bg-gray-100"
+                    }`}
+                  >
+                    {lesson.icon}
+                  </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-purple-800 truncate">
+                    <p className="text-sm font-bold text-gray-900 truncate">
                       {lesson.title}
                     </p>
                     {isCompleted ? (
                       <StarRating stars={stars} size="sm" />
                     ) : (
-                      <p className="text-xs text-purple-400">
+                      <p className="text-xs text-gray-400 font-medium">
                         {progress ? "In progress" : "Not started"}
                       </p>
                     )}
                   </div>
                   {isCompleted && (
-                    <span className="text-green-500 text-sm">✅</span>
+                    <span className="text-emerald-500 text-sm">✅</span>
                   )}
                 </div>
               );
@@ -131,11 +147,13 @@ export default function ProgressScreen({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white/90 rounded-2xl p-4 shadow-md border-2 border-purple-200"
+          className="app-card p-5"
         >
-          <h3 className="font-extrabold text-purple-800 mb-3">My Badges 🏅</h3>
+          <h3 className="font-extrabold text-gray-900 mb-3 flex items-center gap-2">
+            🏅 My Badges
+          </h3>
           {earnedBadges.length > 0 && (
-            <div className="grid grid-cols-3 gap-2 mb-3">
+            <div className="grid grid-cols-3 gap-2.5 mb-3">
               {earnedBadges.map((badge) => (
                 <BadgeCard key={badge.id} badge={badge} earned />
               ))}
@@ -143,8 +161,10 @@ export default function ProgressScreen({
           )}
           {lockedBadges.length > 0 && (
             <>
-              <p className="text-xs text-purple-400 mb-2">Keep going!</p>
-              <div className="grid grid-cols-3 gap-2">
+              <p className="text-xs text-gray-400 font-semibold mb-2">
+                Keep going to unlock!
+              </p>
+              <div className="grid grid-cols-3 gap-2.5">
                 {lockedBadges.map((badge) => (
                   <BadgeCard key={badge.id} badge={badge} earned={false} />
                 ))}
@@ -171,14 +191,14 @@ function BadgeCard({ badge, earned }: { badge: Badge; earned: boolean }) {
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
-      className={`rounded-xl p-2 text-center border-2 ${
+      className={`rounded-2xl p-3 text-center transition-all ${
         earned
-          ? "bg-yellow-50 border-yellow-300"
-          : "bg-gray-100 border-gray-200 opacity-50"
+          ? "bg-gradient-to-b from-amber-50 to-yellow-50 shadow-sm"
+          : "bg-gray-50 opacity-40"
       }`}
     >
       <span className="text-2xl">{badge.icon}</span>
-      <p className="text-[10px] font-bold text-purple-700 mt-1 leading-tight">
+      <p className="text-[10px] font-bold text-gray-700 mt-1 leading-tight">
         {badge.title}
       </p>
     </motion.div>

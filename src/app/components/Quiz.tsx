@@ -36,30 +36,30 @@ export default function Quiz({
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="bg-white/90 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl border-3 sm:border-4 border-purple-300 my-3 sm:my-4 max-w-lg mx-auto"
+      className="app-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 my-3 sm:my-4 max-w-lg mx-auto"
     >
-      <h3 className="text-center text-purple-800 text-base sm:text-lg font-bold mb-2">
+      <h3 className="text-center text-gray-900 text-base sm:text-lg font-extrabold mb-2">
         🧩 Quiz Time!
       </h3>
 
-      <div className="text-center text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 bg-yellow-100 rounded-xl p-3 sm:p-4 border-2 border-yellow-300">
+      <div className="text-center text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 bg-gradient-to-b from-amber-50 to-yellow-50 rounded-2xl p-3 sm:p-4">
         {filledSentence}
       </div>
 
       <div className="flex gap-2 sm:gap-3 justify-center flex-wrap">
         {options.map((option) => {
           let buttonClass =
-            "px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-lg sm:text-xl font-bold border-2 sm:border-3 transition-all min-h-11 ";
+            "px-5 sm:px-6 py-2.5 sm:py-3 rounded-2xl text-lg sm:text-xl font-bold border-2 transition-all min-h-11 ";
 
           if (selected === option) {
             buttonClass += isCorrect
-              ? "bg-green-400 border-green-600 text-white scale-110"
-              : "bg-red-400 border-red-600 text-white animate-[shake_0.5s]";
+              ? "bg-emerald-400 border-emerald-500 text-white scale-110"
+              : "bg-red-400 border-red-500 text-white animate-[shake_0.5s]";
           } else if (selected) {
-            buttonClass += "bg-gray-200 border-gray-300 text-gray-500";
+            buttonClass += "bg-gray-100 border-gray-200 text-gray-400";
           } else {
             buttonClass +=
-              "bg-purple-100 border-purple-400 text-purple-800 hover:bg-purple-200 hover:scale-105 cursor-pointer";
+              "bg-violet-50 border-violet-200 text-gray-800 hover:bg-violet-100 hover:scale-105 cursor-pointer";
           }
 
           return (
@@ -107,7 +107,7 @@ export default function Quiz({
                 setSelected(null);
                 setIsCorrect(null);
               }}
-              className="mt-2 px-4 py-2 bg-blue-400 text-white rounded-full font-bold hover:bg-blue-500 cursor-pointer"
+              className="mt-2 px-4 py-2 bg-violet-100 text-violet-700 rounded-full font-bold cursor-pointer"
             >
               Try Again
             </motion.button>

@@ -21,12 +21,14 @@ import {
 } from "./lib/storage";
 import { lessons, badges } from "./data/lessons";
 import { getActivitiesForLesson } from "./data/activities";
+import { warmupSpeechVoices, setPlaybackSpeed } from "./lib/audio";
 
 import SplashScreen from "./components/screens/SplashScreen";
 import OnboardingScreen from "./components/screens/OnboardingScreen";
 import ProfileScreen from "./components/screens/ProfileScreen";
 import HomeScreen from "./components/screens/HomeScreen";
 import ComicReaderScreen from "./components/screens/ComicReaderScreen";
+import ComicBookApp from "./ComicBookApp";
 import ActivityScreen from "./components/screens/ActivityScreen";
 import ProgressScreen from "./components/screens/ProgressScreen";
 import TeacherDashboard from "./components/screens/TeacherDashboard";
@@ -43,7 +45,13 @@ export default function App() {
     const frame = requestAnimationFrame(() => {
       setMounted(true);
       const existing = getActiveProfile();
-      if (existing) setProfile(existing);
+      if (existing) {
+        setProfile(existing);
+        if (existing.settings?.playbackSpeed) {
+          setPlaybackSpeed(existing.settings.playbackSpeed);
+        }
+      }
+      warmupSpeechVoices();
     });
 
     return () => cancelAnimationFrame(frame);
@@ -167,6 +175,7 @@ export default function App() {
       completeLesson(profile.id, activeLesson.id, stars);
       saveLessonProgress(profile.id, activeLesson.id, {
         activitiesCompleted: results.map((r) => r.activityId),
+        activityResults: results,
         timeSpentSeconds: totalTime,
       });
       checkBadges(profile.id);
@@ -181,15 +190,14 @@ export default function App() {
     (settings: AppSettings) => {
       if (!profile) return;
       updateSettings(profile.id, settings);
+      setPlaybackSpeed(settings.playbackSpeed);
       refreshProfile();
     },
     [profile, refreshProfile],
   );
 
   if (!mounted) {
-    return (
-      <div className="min-h-dvh bg-linear-to-b from-sky to-lavender" />
-    );
+    return <div className="min-h-dvh app-shell" />;
   }
 
   const settings = profile?.settings || {
@@ -197,71 +205,91 @@ export default function App() {
     audioEnabled: true,
     autoRead: false,
     theme: "light" as const,
+    playbackSpeed: "normal" as const,
   };
 
+  const textSizeClass =
+    settings.textSize === "small"
+      ? "text-size-small"
+      : settings.textSize === "large"
+        ? "text-size-large"
+        : "";
+
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={screen}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-      >
-        {screen === "splash" && <SplashScreen onFinish={handleSplashDone} />}
+    <div data-theme={settings.theme} className={textSizeClass}>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={screen}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          {screen === "splash" && <SplashScreen onFinish={handleSplashDone} />}
 
-        {screen === "onboarding" && (
-          <OnboardingScreen onFinish={handleOnboardingDone} />
-        )}
+          {screen === "onboarding" && (
+            <OnboardingScreen onFinish={handleOnboardingDone} />
+          )}
 
-        {screen === "profile" && (
-          <ProfileScreen onCreateProfile={handleCreateProfile} />
-        )}
+          {screen === "profile" && (
+            <ProfileScreen onCreateProfile={handleCreateProfile} />
+          )}
 
-        {screen === "home" && profile && (
-          <HomeScreen
-            profile={profile}
-            onStartLesson={handleStartLesson}
-            onViewProgress={() => setScreen("progress")}
-            onViewSettings={() => setScreen("settings")}
-            onViewTeacherDashboard={() => setScreen("teacherDashboard")}
-          />
-        )}
+          {screen === "home" && profile && (
+            <HomeScreen
+              profile={profile}
+              onStartLesson={handleStartLesson}
+              onReadComic={() => setScreen("comicBook")}
+              onViewProgress={() => setScreen("progress")}
+              onViewSettings={() => setScreen("settings")}
+              onViewTeacherDashboard={() => setScreen("teacherDashboard")}
+            />
+          )}
 
-        {screen === "comicReader" && activeLesson && (
-          <ComicReaderScreen
-            lesson={activeLesson}
-            audioEnabled={settings.audioEnabled}
-            onFinish={handleComicFinish}
-            onBack={() => setScreen("home")}
-          />
-        )}
+          {screen === "comicBook" && (
+            <ComicBookApp onBack={() => setScreen("home")} />
+          )}
 
-        {screen === "activity" && activeLesson && (
-          <ActivityScreen
-            activities={getActivitiesForLesson(activeLesson.id)}
-            audioEnabled={settings.audioEnabled}
-            onFinish={handleActivitiesFinish}
-            onBack={() => setScreen("home")}
-          />
-        )}
+          {screen === "comicReader" && activeLesson && (
+            <ComicReaderScreen
+              lesson={activeLesson}
+              audioEnabled={settings.audioEnabled}
+              autoRead={settings.autoRead}
+              onFinish={handleComicFinish}
+              onBack={() => setScreen("home")}
+            />
+          )}
 
-        {screen === "progress" && profile && (
-          <ProgressScreen profile={profile} onBack={() => setScreen("home")} />
-        )}
+          {screen === "activity" && activeLesson && (
+            <ActivityScreen
+              activities={getActivitiesForLesson(activeLesson.id)}
+              audioEnabled={settings.audioEnabled}
+              autoRead={settings.autoRead}
+              onFinish={handleActivitiesFinish}
+              onBack={() => setScreen("home")}
+            />
+          )}
 
-        {screen === "teacherDashboard" && (
-          <TeacherDashboard onBack={() => setScreen("home")} />
-        )}
+          {screen === "progress" && profile && (
+            <ProgressScreen
+              profile={profile}
+              onBack={() => setScreen("home")}
+            />
+          )}
 
-        {screen === "settings" && (
-          <SettingsScreen
-            settings={settings}
-            onSave={handleSaveSettings}
-            onBack={() => setScreen("home")}
-          />
-        )}
-      </motion.div>
-    </AnimatePresence>
+          {screen === "teacherDashboard" && (
+            <TeacherDashboard onBack={() => setScreen("home")} />
+          )}
+
+          {screen === "settings" && (
+            <SettingsScreen
+              settings={settings}
+              onSave={handleSaveSettings}
+              onBack={() => setScreen("home")}
+            />
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 }

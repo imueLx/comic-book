@@ -17,6 +17,8 @@ export const activities: Activity[] = [
     prompt: "Which word ends with -at?",
     correctAnswer: "Cat",
     options: ["Cat", "Dog", "Frog", "Pig"],
+    hint: "Look for the word that ends with the sound -at.",
+    skillArea: "wordFamily_at",
   },
   {
     id: "at-tap-2",
@@ -27,6 +29,8 @@ export const activities: Activity[] = [
     prompt: "Which word ends with -at?",
     correctAnswer: "Bat",
     options: ["Sun", "Bat", "Cup", "Fan"],
+    hint: "Remember, -at words sound like cat, hat, mat.",
+    skillArea: "wordFamily_at",
   },
   {
     id: "at-sentence-1",
@@ -38,6 +42,8 @@ export const activities: Activity[] = [
     blank: "cat",
     correctAnswer: "cat",
     options: ["cat", "cup", "fan"],
+    hint: "What animal sits on a mat? It rhymes with mat!",
+    skillArea: "sentenceReading",
   },
   {
     id: "at-listen-1",
@@ -48,6 +54,8 @@ export const activities: Activity[] = [
     word: "Hat",
     correctAnswer: "Hat",
     options: ["Hat", "Hot", "Hit"],
+    hint: "Listen again! The word has the -at sound.",
+    skillArea: "wordFamily_at",
   },
 
   // Lesson 3: -an word family
@@ -60,6 +68,8 @@ export const activities: Activity[] = [
     prompt: "Which word ends with -an?",
     correctAnswer: "Fan",
     options: ["Fan", "Cat", "Cup", "Ship"],
+    hint: "Look for the word that ends with the sound -an.",
+    skillArea: "wordFamily_an",
   },
   {
     id: "an-tap-2",
@@ -70,6 +80,8 @@ export const activities: Activity[] = [
     prompt: "Which word ends with -an?",
     correctAnswer: "Van",
     options: ["Bat", "Van", "Bed", "Frog"],
+    hint: "Remember, -an words sound like fan, man, pan.",
+    skillArea: "wordFamily_an",
   },
   {
     id: "an-sentence-1",
@@ -81,6 +93,8 @@ export const activities: Activity[] = [
     blank: "man",
     correctAnswer: "man",
     options: ["man", "mat", "bed"],
+    hint: "Who uses a pan? It rhymes with pan!",
+    skillArea: "sentenceReading",
   },
   {
     id: "an-sort-1",
@@ -91,6 +105,8 @@ export const activities: Activity[] = [
     family1: { pattern: "-at", words: ["cat", "bat", "mat"] },
     family2: { pattern: "-an", words: ["fan", "man", "pan"] },
     allWords: ["cat", "fan", "bat", "man", "mat", "pan"],
+    hint: "Listen to the ending sound. Does it end with -at or -an?",
+    skillArea: "wordFamily_at",
   },
 
   // Lesson 4: Short vowels
@@ -103,6 +119,8 @@ export const activities: Activity[] = [
     prompt: "Tap the short vowel word.",
     correctAnswer: "Pig",
     options: ["Pig", "Cake", "Tree", "Boat"],
+    hint: "Short vowel words have quick sounds like pig, pen, cup.",
+    skillArea: "shortVowels",
   },
   {
     id: "sv-listen-1",
@@ -113,6 +131,8 @@ export const activities: Activity[] = [
     word: "Cup",
     correctAnswer: "Cup",
     options: ["Cup", "Cape", "Cope"],
+    hint: "Listen carefully! The middle sound is short.",
+    skillArea: "shortVowels",
   },
   {
     id: "sv-sentence-1",
@@ -124,6 +144,8 @@ export const activities: Activity[] = [
     blank: "bed",
     correctAnswer: "bed",
     options: ["bed", "bat", "pan"],
+    hint: "Where do you sleep at night?",
+    skillArea: "shortVowels",
   },
 
   // Lesson 5: Blends
@@ -136,6 +158,8 @@ export const activities: Activity[] = [
     prompt: "Which word starts with sh?",
     correctAnswer: "Ship",
     options: ["Ship", "Frog", "Brush", "Cup"],
+    hint: "Say 'shhhh' — which word starts with that sound?",
+    skillArea: "blends",
   },
   {
     id: "bl-match-1",
@@ -148,6 +172,8 @@ export const activities: Activity[] = [
       { word: "br", match: "Brush" },
       { word: "fr", match: "Frog" },
     ],
+    hint: "Say each blend out loud. Which word starts with that sound?",
+    skillArea: "blends",
   },
   {
     id: "bl-listen-1",
@@ -158,6 +184,8 @@ export const activities: Activity[] = [
     word: "Frog",
     correctAnswer: "Frog",
     options: ["Frog", "Flag", "Fog"],
+    hint: "Listen to the beginning sound. It starts with 'fr'.",
+    skillArea: "blends",
   },
 
   // Lesson 6: Context Clues
@@ -171,6 +199,8 @@ export const activities: Activity[] = [
     blank: "hop",
     correctAnswer: "hop",
     options: ["hop", "fly", "sing"],
+    hint: "Think about what a frog does. It jumps!",
+    skillArea: "contextClues",
   },
   {
     id: "cc-sentence-2",
@@ -182,6 +212,8 @@ export const activities: Activity[] = [
     blank: "mat",
     correctAnswer: "mat",
     options: ["mat", "van", "pen"],
+    hint: "Where does a cat like to sit? It rhymes with cat!",
+    skillArea: "contextClues",
   },
   {
     id: "cc-tap-1",
@@ -192,6 +224,8 @@ export const activities: Activity[] = [
     prompt: "The ___ can swim.",
     correctAnswer: "Fish",
     options: ["Fish", "Cat", "Hat", "Pan"],
+    hint: "Which animal lives in water and can swim?",
+    skillArea: "contextClues",
   },
 ];
 

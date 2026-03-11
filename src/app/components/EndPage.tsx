@@ -19,7 +19,7 @@ export default function EndPage() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="text-3xl sm:text-5xl font-extrabold text-purple-800 mb-4 sm:mb-6"
+        className="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-4 sm:mb-6"
       >
         The End!
       </motion.h2>
@@ -28,14 +28,14 @@ export default function EndPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="bg-white/90 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border-3 sm:border-4 border-yellow-400 shadow-xl max-w-lg mb-4 sm:mb-6 mx-2"
+        className="app-card p-4 sm:p-6 max-w-lg mb-4 sm:mb-6 mx-2"
       >
-        <p className="text-base sm:text-xl text-purple-700 mb-3 sm:mb-4">
+        <p className="text-base sm:text-xl text-gray-600 mb-3 sm:mb-4">
           📖 Ana and Ben became <strong>better readers</strong> because they
           learned <strong>word patterns</strong>.
         </p>
         <motion.p
-          className="text-2xl font-bold text-pink-600"
+          className="text-2xl font-bold text-violet-600"
           animate={{ scale: [1, 1.05, 1] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
@@ -71,12 +71,12 @@ export default function EndPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
-        className="bg-green-100 rounded-xl sm:rounded-2xl p-4 sm:p-5 border-2 sm:border-3 border-green-400 max-w-md shadow-lg mx-2"
+        className="bg-emerald-50 rounded-2xl p-4 sm:p-5 max-w-md shadow-sm mx-2"
       >
-        <h3 className="font-bold text-green-800 text-base sm:text-lg mb-2 sm:mb-3">
+        <h3 className="font-extrabold text-emerald-700 text-base sm:text-lg mb-2 sm:mb-3">
           🌟 What We Learned:
         </h3>
-        <ul className="text-left text-green-700 space-y-1.5 sm:space-y-2 text-sm sm:text-base">
+        <ul className="text-left text-emerald-600 space-y-1.5 sm:space-y-2 text-sm sm:text-base">
           <li>
             ✅ The <strong>–at</strong> word family: cat, bat, hat, mat
           </li>

@@ -12,7 +12,7 @@ interface AudioButtonProps {
 }
 
 const sizes = {
-  sm: "w-8 h-8 text-sm",
+  sm: "w-9 h-9 text-sm",
   md: "w-11 h-11 text-lg",
   lg: "w-14 h-14 text-2xl",
 };
@@ -37,7 +37,7 @@ export default function AudioButton({
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={handlePlay}
-      className={`${sizes[size]} rounded-full bg-blue-400 text-white flex items-center justify-center shadow-md border-2 border-blue-500 min-h-11 min-w-11 cursor-pointer ${className}`}
+      className={`${sizes[size]} rounded-full flex items-center justify-center min-h-11 min-w-11 cursor-pointer shadow-md text-white ${playing ? "bg-gradient-to-b from-emerald-400 to-emerald-500" : "bg-gradient-to-b from-violet-400 to-purple-500"} ${className}`}
       aria-label={`Listen to ${word}`}
       title={`Listen to "${word}"`}
     >

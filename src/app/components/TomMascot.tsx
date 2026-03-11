@@ -28,9 +28,9 @@ export default function TomMascot({
         <motion.div
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl px-3 py-1.5 mt-1 shadow-md border-2 border-amber-300 max-w-50"
+          className="bg-white rounded-2xl px-3 py-1.5 mt-1 shadow-sm max-w-50"
         >
-          <p className="text-xs sm:text-sm font-bold text-amber-800 text-center">
+          <p className="text-xs sm:text-sm font-bold text-gray-700 text-center">
             {message}
           </p>
         </motion.div>

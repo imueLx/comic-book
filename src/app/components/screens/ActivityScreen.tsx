@@ -13,6 +13,7 @@ import AudioButton from "../AudioButton";
 interface ActivityScreenProps {
   activities: Activity[];
   audioEnabled: boolean;
+  autoRead: boolean;
   onFinish: (results: ActivityResult[]) => void;
   onBack: () => void;
 }
@@ -20,6 +21,7 @@ interface ActivityScreenProps {
 export default function ActivityScreen({
   activities,
   audioEnabled,
+  autoRead,
   onFinish,
   onBack,
 }: ActivityScreenProps) {
@@ -84,6 +86,7 @@ export default function ActivityScreen({
         correct,
         attempts: att,
         timeSpentSeconds: Math.round((Date.now() - startTime) / 1000),
+        skillArea: activity.skillArea,
       };
       setResults((prev) => [...prev, result]);
     },
@@ -177,10 +180,15 @@ export default function ActivityScreen({
 
   // Listen and choose: speak word on mount
   useEffect(() => {
-    if (activity?.type === "listenAndChoose" && activity.word && audioEnabled) {
+    if (
+      activity?.type === "listenAndChoose" &&
+      activity.word &&
+      audioEnabled &&
+      autoRead
+    ) {
       setTimeout(() => speakWord(activity.word!), 600);
     }
-  }, [activity, audioEnabled]);
+  }, [activity, audioEnabled, autoRead]);
 
   // Results screen
   if (showResults) {
@@ -195,26 +203,26 @@ export default function ActivityScreen({
             : 0;
 
     return (
-      <div className="min-h-dvh bg-linear-to-b from-sun to-pink flex flex-col items-center justify-center px-4 py-8">
+      <div className="min-h-dvh bg-linear-to-br from-violet-500 via-purple-500 to-indigo-600 flex flex-col items-center justify-center px-5 py-8 safe-top safe-bottom">
         <Confetti show={true} duration={4000} />
         <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring" }}
-          className="bg-white/95 rounded-3xl p-6 shadow-xl border-3 border-purple-300 max-w-sm w-full text-center"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 200 }}
+          className="app-card p-6 sm:p-8 max-w-sm w-full text-center"
         >
-          <TomMascot message="Amazing work!" size="md" className="mb-3" />
-          <h2 className="text-2xl font-extrabold text-purple-800 mb-2">
+          <TomMascot message="Amazing work!" size="md" className="mb-4" />
+          <h2 className="text-2xl font-extrabold text-gray-900 mb-2">
             Great Job! 🎉
           </h2>
-          <p className="text-purple-600 mb-4">
+          <p className="text-gray-600 mb-5 font-medium">
             You got {correctCount} out of {results.length} correct!
           </p>
           <StarRating stars={stars} size="lg" />
           <motion.button
-            whileTap={{ scale: 0.95 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => onFinish(results)}
-            className="mt-6 w-full py-3 rounded-full bg-green-500 text-white font-bold text-lg shadow-lg min-h-12 cursor-pointer"
+            className="mt-6 w-full py-3.5 rounded-2xl primary-btn font-extrabold text-lg min-h-13 cursor-pointer"
           >
             Continue →
           </motion.button>
@@ -226,48 +234,69 @@ export default function ActivityScreen({
   if (!activity) return null;
 
   return (
-    <div className="min-h-dvh bg-linear-to-b from-lavender to-peach flex flex-col">
+    <div className="app-shell min-h-dvh flex flex-col">
       <Confetti show={showConfetti} />
 
       {/* Header */}
-      <header className="bg-white/70 backdrop-blur-sm border-b-2 border-purple-300 py-2 px-3 sticky top-0 z-10 safe-top">
+      <header className="app-header py-3 px-4 sticky top-0 z-10 safe-top">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={onBack}
-            className="text-sm font-bold text-purple-600 min-h-9 cursor-pointer"
+            className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-sm cursor-pointer"
           >
-            ← Back
+            ←
           </motion.button>
-          <span className="text-xs font-bold text-purple-500 bg-purple-100 px-2 py-1 rounded-full">
-            {index + 1} / {activities.length}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="soft-chip text-xs font-bold px-2.5 py-1 rounded-full">
+              {index + 1}/{activities.length}
+            </span>
+          </div>
+          <div className="w-9" />
+        </div>
+        {/* Mini progress */}
+        <div className="max-w-lg mx-auto mt-2 flex gap-1">
+          {activities.map((_, i) => (
+            <div
+              key={i}
+              className={`flex-1 h-1.5 rounded-full ${
+                i < index
+                  ? "bg-violet-400"
+                  : i === index
+                    ? "bg-violet-500"
+                    : "bg-gray-200"
+              }`}
+            />
+          ))}
         </div>
       </header>
 
       {/* Activity content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-3 py-4 max-w-lg mx-auto w-full">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-4 max-w-lg mx-auto w-full">
         <AnimatePresence mode="wait">
           <motion.div
             key={activity.id}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="w-full"
           >
             {/* Title & instruction */}
-            <div className="text-center mb-4">
-              <h3 className="text-xl sm:text-2xl font-extrabold text-purple-800 mb-1">
+            <div className="text-center mb-5">
+              <h3 className="text-xl sm:text-2xl font-extrabold text-gray-900 mb-1">
                 {activity.title}
               </h3>
-              <p className="text-sm text-purple-600">{activity.instruction}</p>
+              <p className="text-sm text-gray-500 font-medium">
+                {activity.instruction}
+              </p>
             </div>
 
             {/* TAP CORRECT WORD */}
             {activity.type === "tapCorrectWord" && (
-              <div className="bg-white/90 rounded-2xl p-4 shadow-lg border-2 border-purple-200">
+              <div className="app-card p-5">
                 {activity.prompt && (
-                  <p className="text-center text-lg font-bold text-purple-800 mb-4 bg-yellow-100 rounded-xl p-3">
+                  <p className="text-center text-lg font-bold text-gray-900 mb-5 bg-linear-to-r from-amber-50 to-yellow-50 rounded-2xl p-4">
                     {activity.prompt}
                   </p>
                 )}
@@ -289,11 +318,11 @@ export default function ActivityScreen({
 
             {/* COMPLETE THE SENTENCE */}
             {activity.type === "completeTheSentence" && (
-              <div className="bg-white/90 rounded-2xl p-4 shadow-lg border-2 border-purple-200">
-                <p className="text-center text-xl font-bold text-purple-800 mb-4 bg-yellow-100 rounded-xl p-3">
+              <div className="app-card p-5">
+                <p className="text-center text-xl font-bold text-gray-900 mb-5 bg-linear-to-r from-amber-50 to-yellow-50 rounded-2xl p-4">
                   {activity.sentence}
                 </p>
-                <div className="flex flex-wrap gap-2 justify-center">
+                <div className="flex flex-wrap gap-2.5 justify-center">
                   {activity.options?.map((opt) => (
                     <WordCard
                       key={opt}
@@ -311,14 +340,14 @@ export default function ActivityScreen({
 
             {/* LISTEN AND CHOOSE */}
             {activity.type === "listenAndChoose" && (
-              <div className="bg-white/90 rounded-2xl p-4 shadow-lg border-2 border-purple-200">
-                <div className="flex justify-center mb-4">
+              <div className="app-card p-5">
+                <div className="flex justify-center mb-5">
                   <AudioButton word={activity.word || ""} size="lg" />
                 </div>
-                <p className="text-center text-sm text-purple-600 mb-3">
+                <p className="text-center text-sm text-gray-500 mb-4 font-medium">
                   Tap 🔈 to listen, then pick the word!
                 </p>
-                <div className="flex flex-wrap gap-2 justify-center">
+                <div className="flex flex-wrap gap-2.5 justify-center">
                   {activity.options?.map((opt) => (
                     <WordCard
                       key={opt}
@@ -337,9 +366,8 @@ export default function ActivityScreen({
             {activity.type === "wordFamilySort" &&
               activity.family1 &&
               activity.family2 && (
-                <div className="bg-white/90 rounded-2xl p-4 shadow-lg border-2 border-purple-200">
-                  {/* Unsorted words */}
-                  <div className="flex flex-wrap gap-2 justify-center mb-4">
+                <div className="app-card p-5">
+                  <div className="flex flex-wrap gap-2 justify-center mb-5">
                     {unsortedWords.map((w) => (
                       <WordCard
                         key={w}
@@ -349,73 +377,72 @@ export default function ActivityScreen({
                       />
                     ))}
                   </div>
-
-                  {/* Family buckets */}
                   <div className="grid grid-cols-2 gap-3">
-                    <div
-                      className="bg-pink-50 rounded-xl p-3 border-2 border-pink-300 min-h-25 cursor-pointer"
+                    <motion.div
+                      whileTap={{ scale: 0.98 }}
+                      className="bg-linear-to-b from-pink-50 to-rose-50 rounded-2xl p-3.5 min-h-25 cursor-pointer border-2 border-pink-200"
                       onClick={() =>
                         unsortedWords[0] && handleSortWord(unsortedWords[0], 1)
                       }
                     >
-                      <p className="text-center font-bold text-pink-700 text-sm mb-2">
+                      <p className="text-center font-extrabold text-pink-600 text-sm mb-2">
                         {activity.family1.pattern}
                       </p>
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-wrap gap-1.5">
                         {sortedFamily1.map((w) => (
                           <span
                             key={w}
-                            className="bg-pink-200 px-2 py-1 rounded text-xs font-bold"
+                            className="bg-pink-200 px-2.5 py-1 rounded-lg text-xs font-bold text-pink-800"
                           >
                             {w}
                           </span>
                         ))}
                       </div>
                       {unsortedWords.length > 0 && (
-                        <p className="text-xs text-pink-400 text-center mt-1">
-                          Tap word above, then tap here
+                        <p className="text-[10px] text-pink-400 text-center mt-2">
+                          Tap word, then here
                         </p>
                       )}
-                    </div>
-                    <div
-                      className="bg-blue-50 rounded-xl p-3 border-2 border-blue-300 min-h-25 cursor-pointer"
+                    </motion.div>
+                    <motion.div
+                      whileTap={{ scale: 0.98 }}
+                      className="bg-linear-to-b from-blue-50 to-indigo-50 rounded-2xl p-3.5 min-h-25 cursor-pointer border-2 border-blue-200"
                       onClick={() =>
                         unsortedWords[0] && handleSortWord(unsortedWords[0], 2)
                       }
                     >
-                      <p className="text-center font-bold text-blue-700 text-sm mb-2">
+                      <p className="text-center font-extrabold text-blue-600 text-sm mb-2">
                         {activity.family2.pattern}
                       </p>
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-wrap gap-1.5">
                         {sortedFamily2.map((w) => (
                           <span
                             key={w}
-                            className="bg-blue-200 px-2 py-1 rounded text-xs font-bold"
+                            className="bg-blue-200 px-2.5 py-1 rounded-lg text-xs font-bold text-blue-800"
                           >
                             {w}
                           </span>
                         ))}
                       </div>
                       {unsortedWords.length > 0 && (
-                        <p className="text-xs text-blue-400 text-center mt-1">
-                          Tap word above, then tap here
+                        <p className="text-[10px] text-blue-400 text-center mt-2">
+                          Tap word, then here
                         </p>
                       )}
-                    </div>
+                    </motion.div>
                   </div>
                 </div>
               )}
 
             {/* MATCH WORDS */}
             {activity.type === "matchWords" && activity.pairs && (
-              <div className="bg-white/90 rounded-2xl p-4 shadow-lg border-2 border-purple-200">
+              <div className="app-card p-5">
                 {(() => {
                   const pairs = activity.pairs ?? [];
-
                   return (
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <p className="text-xs font-bold text-purple-600 text-center">
+                      <div className="space-y-2.5">
+                        <p className="text-xs font-bold text-gray-500 text-center uppercase tracking-wider">
                           Blends
                         </p>
                         {pairs.map((p) => (
@@ -427,26 +454,25 @@ export default function ActivityScreen({
                               handleMatchSelect(p.word, true)
                             }
                             disabled={matchedPairs.has(p.word)}
-                            className={`w-full py-3 rounded-xl font-bold text-lg border-2 min-h-12 cursor-pointer ${
+                            className={`w-full py-3 rounded-2xl font-bold text-lg min-h-12 cursor-pointer transition-all ${
                               matchedPairs.has(p.word)
-                                ? "bg-green-100 border-green-400 text-green-700"
+                                ? "bg-emerald-100 text-emerald-700 shadow-sm"
                                 : selectedBlend === p.word
-                                  ? "bg-purple-100 border-purple-500 text-purple-800"
-                                  : "bg-white border-purple-200"
+                                  ? "bg-violet-100 text-violet-800 ring-2 ring-violet-400 shadow-md"
+                                  : "bg-gray-50 text-gray-800 hover:bg-gray-100"
                             }`}
                           >
                             {p.word}
                           </motion.button>
                         ))}
                       </div>
-                      <div className="space-y-2">
-                        <p className="text-xs font-bold text-purple-600 text-center">
+                      <div className="space-y-2.5">
+                        <p className="text-xs font-bold text-gray-500 text-center uppercase tracking-wider">
                           Words
                         </p>
                         {shuffledMatches.map((match) => {
                           const p = pairs.find((pair) => pair.match === match);
                           if (!p) return null;
-
                           return (
                             <motion.button
                               key={p.match}
@@ -456,10 +482,10 @@ export default function ActivityScreen({
                                 handleMatchSelect(p.match, false)
                               }
                               disabled={matchedPairs.has(p.word)}
-                              className={`w-full py-3 rounded-xl font-bold text-lg border-2 min-h-12 cursor-pointer ${
+                              className={`w-full py-3 rounded-2xl font-bold text-lg min-h-12 cursor-pointer transition-all ${
                                 matchedPairs.has(p.word)
-                                  ? "bg-green-100 border-green-400 text-green-700"
-                                  : "bg-white border-purple-200"
+                                  ? "bg-emerald-100 text-emerald-700 shadow-sm"
+                                  : "bg-gray-50 text-gray-800 hover:bg-gray-100"
                               }`}
                             >
                               {p.match}
@@ -479,15 +505,15 @@ export default function ActivityScreen({
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mt-4 text-center"
+                  className="mt-5 text-center"
                 >
-                  <p className="text-green-600 font-bold text-xl">
+                  <p className="text-emerald-600 font-extrabold text-xl mb-3">
                     🎉 Correct!
                   </p>
                   <motion.button
-                    whileTap={{ scale: 0.95 }}
+                    whileTap={{ scale: 0.97 }}
                     onClick={goNextActivity}
-                    className="mt-3 px-6 py-2.5 bg-green-500 text-white rounded-full font-bold shadow-md min-h-11 cursor-pointer"
+                    className="px-8 py-3 primary-btn rounded-2xl font-bold min-h-12 cursor-pointer"
                   >
                     {isLast ? "See Results ⭐" : "Next →"}
                   </motion.button>
@@ -499,16 +525,23 @@ export default function ActivityScreen({
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-4 text-center"
+                    className="mt-5 text-center"
                   >
-                    <p className="text-orange-600 font-bold">🤔 Try again!</p>
+                    <p className="text-amber-600 font-bold mb-1">
+                      🤔 Not quite!
+                    </p>
+                    {activity.hint && (
+                      <p className="text-sm text-gray-500 mb-3 bg-amber-50 rounded-xl p-3 mx-auto max-w-xs">
+                        💡 <strong>Hint:</strong> {activity.hint}
+                      </p>
+                    )}
                     <motion.button
                       whileTap={{ scale: 0.95 }}
                       onClick={() => {
                         setSelected(null);
                         setIsCorrect(null);
                       }}
-                      className="mt-2 px-4 py-2 bg-blue-400 text-white rounded-full font-bold text-sm min-h-10 cursor-pointer"
+                      className="px-5 py-2.5 rounded-2xl bg-gray-100 font-bold text-sm min-h-11 cursor-pointer text-gray-700"
                     >
                       Try Again
                     </motion.button>

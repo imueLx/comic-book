@@ -44,7 +44,7 @@ export default function ComicPageView({ page }: ComicPageViewProps) {
         <span className="text-lg sm:text-2xl">
           {sceneEmojis[page.scene || "classroom"]}
         </span>
-        <h2 className="text-xl sm:text-3xl font-extrabold text-purple-800">
+        <h2 className="text-xl sm:text-3xl font-extrabold text-gray-900">
           {page.title}
         </h2>
         <span className="text-lg sm:text-2xl">
@@ -108,9 +108,9 @@ export default function ComicPageView({ page }: ComicPageViewProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="mt-3 bg-yellow-100 rounded-xl p-3 border-2 border-yellow-300 text-center"
+              className="mt-3 bg-gradient-to-b from-amber-50 to-yellow-50 rounded-2xl p-3 text-center"
             >
-              <p className="text-sm font-bold text-yellow-800">
+              <p className="text-sm font-bold text-amber-700">
                 🌟 You found {clickedWords.size} word
                 {clickedWords.size > 1 ? "s" : ""}:{" "}
                 {Array.from(clickedWords).join(", ")}

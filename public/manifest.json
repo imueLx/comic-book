@@ -7,7 +7,16 @@
   "background_color": "#E0E7FF",
   "theme_color": "#7C3AED",
   "orientation": "portrait",
+  "id": "/",
+  "scope": "/",
+  "categories": ["education", "kids"],
   "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
     {
       "src": "/icon-192.png",
       "sizes": "192x192",
