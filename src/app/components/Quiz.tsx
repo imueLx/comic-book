@@ -42,7 +42,7 @@ export default function Quiz({
         🧩 Quiz Time!
       </h3>
 
-      <div className="text-center text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 bg-gradient-to-b from-amber-50 to-yellow-50 rounded-2xl p-3 sm:p-4">
+      <div className="text-center text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 bg-linear-to-b from-amber-50 to-yellow-50 rounded-2xl p-3 sm:p-4">
         {filledSentence}
       </div>
 

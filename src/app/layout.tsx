@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Baloo_2, Nunito } from "next/font/google";
+import { Baloo_2, Nunito, Bangers } from "next/font/google";
 import "./globals.css";
 
 const baloo = Baloo_2({
@@ -12,6 +12,12 @@ const nunito = Nunito({
   subsets: ["latin"],
   weight: ["400", "600", "700", "800"],
   variable: "--font-nunito",
+});
+
+const bangers = Bangers({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-bangers",
 });
 
 export const metadata: Metadata = {
@@ -44,7 +50,7 @@ export default function RootLayout({
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
       </head>
       <body
-        className={`${baloo.variable} ${nunito.variable} antialiased overflow-x-hidden`}
+        className={`${baloo.variable} ${nunito.variable} ${bangers.variable} antialiased overflow-x-hidden`}
       >
         {children}
         <script

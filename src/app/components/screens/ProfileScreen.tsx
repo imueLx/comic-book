@@ -33,7 +33,7 @@ export default function ProfileScreen({ onCreateProfile }: ProfileScreenProps) {
           key={avatar}
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
-          className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center border-4 border-violet-200 shadow-lg"
+          className="w-20 h-20 mx-auto mb-4 rounded-full bg-linear-to-br from-violet-100 to-purple-100 flex items-center justify-center border-4 border-violet-200 shadow-lg"
         >
           <span className="text-4xl">{avatar}</span>
         </motion.div>

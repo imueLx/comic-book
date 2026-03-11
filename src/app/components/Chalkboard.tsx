@@ -11,7 +11,10 @@ interface ChalkboardProps {
 export default function Chalkboard({ words, label }: ChalkboardProps) {
   const handleWordClick = (word: string) => {
     const clean = word.replace(/[^a-zA-Z]/g, "");
-    if (clean) speakWord(clean);
+    if (clean)
+      speakWord(clean).catch(() => {
+        /* speech unavailable — no-op */
+      });
   };
 
   return (

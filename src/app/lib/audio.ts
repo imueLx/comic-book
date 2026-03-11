@@ -4,6 +4,7 @@
 
 let speechSynthRef: SpeechSynthesis | null = null;
 let speedMultiplier = 1.0;
+let speechAvailable: boolean | null = null;
 
 function getSpeech(): SpeechSynthesis | null {
   if (typeof window === "undefined") return null;
@@ -11,6 +12,16 @@ function getSpeech(): SpeechSynthesis | null {
     speechSynthRef = window.speechSynthesis;
   }
   return speechSynthRef;
+}
+
+/** Check whether the Web Speech API is usable on this device. */
+export function isSpeechSupported(): boolean {
+  if (speechAvailable !== null) return speechAvailable;
+  if (typeof window === "undefined") return false;
+  speechAvailable =
+    "speechSynthesis" in window &&
+    typeof SpeechSynthesisUtterance !== "undefined";
+  return speechAvailable;
 }
 
 function getPreferredVoice(
@@ -104,10 +115,14 @@ export function warmupSpeechVoices() {
 }
 
 export function speak(text: string, rate = 0.88, pitch = 1.18): Promise<void> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
+    if (!isSpeechSupported()) {
+      reject(new Error("speech-not-supported"));
+      return;
+    }
     const synth = getSpeech();
     if (!synth) {
-      resolve();
+      reject(new Error("speech-not-available"));
       return;
     }
 
@@ -141,7 +156,14 @@ export function speak(text: string, rate = 0.88, pitch = 1.18): Promise<void> {
       }
 
       utterance.onend = () => resolve();
-      utterance.onerror = () => resolve();
+      utterance.onerror = (e) => {
+        // "interrupted" and "canceled" are expected (e.g. user navigated away)
+        if (e.error === "interrupted" || e.error === "canceled") {
+          resolve();
+        } else {
+          reject(new Error(e.error || "speech-error"));
+        }
+      };
       synth.speak(utterance);
     })();
   });

@@ -45,7 +45,7 @@ export default function OnboardingScreen({ onFinish }: OnboardingScreenProps) {
 
   return (
     <div
-      className={`min-h-dvh bg-gradient-to-br ${slide.gradient} flex flex-col items-center justify-between px-6 py-10 safe-top safe-bottom transition-all duration-500 relative overflow-hidden`}
+      className={`min-h-dvh bg-linear-to-br ${slide.gradient} flex flex-col items-center justify-between px-6 py-10 safe-top safe-bottom transition-all duration-500 relative overflow-hidden`}
     >
       {/* Background decor */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -116,7 +116,7 @@ export default function OnboardingScreen({ onFinish }: OnboardingScreenProps) {
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => setCurrent((c) => c - 1)}
-              className="flex-1 py-3.5 rounded-2xl bg-white/15 backdrop-blur-sm text-white font-bold text-lg border border-white/20 min-h-[52px] cursor-pointer"
+              className="flex-1 py-3.5 rounded-2xl bg-white/15 backdrop-blur-sm text-white font-bold text-lg border border-white/20 min-h-13 cursor-pointer"
             >
               Back
             </motion.button>
@@ -124,7 +124,7 @@ export default function OnboardingScreen({ onFinish }: OnboardingScreenProps) {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => (isLast ? onFinish() : setCurrent((c) => c + 1))}
-            className="flex-1 py-3.5 rounded-2xl bg-white text-violet-700 font-extrabold text-lg min-h-[52px] cursor-pointer shadow-lg"
+            className="flex-1 py-3.5 rounded-2xl bg-white text-violet-700 font-extrabold text-lg min-h-13 cursor-pointer shadow-lg"
           >
             {isLast ? "Let's Go! 🚀" : "Next"}
           </motion.button>

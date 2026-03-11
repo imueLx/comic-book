@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { speakWord, isSpeaking } from "../lib/audio";
-import { useState } from "react";
+import { speakWord, isSpeaking, isSpeechSupported } from "../lib/audio";
+import { useState, useEffect } from "react";
 
 interface AudioButtonProps {
   word: string;
@@ -24,12 +24,22 @@ export default function AudioButton({
   className = "",
 }: AudioButtonProps) {
   const [playing, setPlaying] = useState(false);
+  const [unsupported, setUnsupported] = useState(false);
+
+  useEffect(() => {
+    setUnsupported(!isSpeechSupported());
+  }, []);
 
   const handlePlay = async () => {
-    if (isSpeaking()) return;
+    if (unsupported || isSpeaking()) return;
     setPlaying(true);
-    await speakWord(word);
-    setPlaying(false);
+    try {
+      await speakWord(word);
+    } catch {
+      setUnsupported(true);
+    } finally {
+      setPlaying(false);
+    }
   };
 
   return (
@@ -37,11 +47,17 @@ export default function AudioButton({
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       onClick={handlePlay}
-      className={`${sizes[size]} rounded-full flex items-center justify-center min-h-11 min-w-11 cursor-pointer shadow-md text-white ${playing ? "bg-gradient-to-b from-emerald-400 to-emerald-500" : "bg-gradient-to-b from-violet-400 to-purple-500"} ${className}`}
-      aria-label={`Listen to ${word}`}
-      title={`Listen to "${word}"`}
+      className={`${sizes[size]} rounded-full flex items-center justify-center min-h-11 min-w-11 cursor-pointer shadow-md text-white ${playing ? "bg-linear-to-b from-emerald-400 to-emerald-500" : "bg-linear-to-b from-violet-400 to-purple-500"} ${className}`}
+      aria-label={unsupported ? `Word: ${word}` : `Listen to ${word}`}
+      title={
+        unsupported
+          ? "Audio not available on this device"
+          : `Listen to "${word}"`
+      }
     >
-      {playing ? (
+      {unsupported ? (
+        "🔇"
+      ) : playing ? (
         <motion.span
           animate={{ scale: [1, 1.2, 1] }}
           transition={{ duration: 0.5, repeat: Infinity }}

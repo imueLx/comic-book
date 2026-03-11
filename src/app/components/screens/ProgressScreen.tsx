@@ -53,7 +53,7 @@ export default function ProgressScreen({
           className="app-card p-5"
         >
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center border-2 border-violet-200 shadow-sm">
+            <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-violet-100 to-purple-100 flex items-center justify-center border-2 border-violet-200 shadow-sm">
               <span className="text-3xl">{profile.avatar}</span>
             </div>
             <div>
@@ -66,7 +66,7 @@ export default function ProgressScreen({
             </div>
           </div>
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-gradient-to-b from-violet-50 to-purple-50 rounded-2xl p-3 text-center">
+            <div className="bg-linear-to-b from-violet-50 to-purple-50 rounded-2xl p-3 text-center">
               <p className="text-2xl font-extrabold text-violet-700">
                 {completedLessons}
               </p>
@@ -74,7 +74,7 @@ export default function ProgressScreen({
                 Lessons
               </p>
             </div>
-            <div className="bg-gradient-to-b from-amber-50 to-yellow-50 rounded-2xl p-3 text-center">
+            <div className="bg-linear-to-b from-amber-50 to-yellow-50 rounded-2xl p-3 text-center">
               <p className="text-2xl font-extrabold text-amber-600">
                 {totalStars}
               </p>
@@ -82,7 +82,7 @@ export default function ProgressScreen({
                 Stars
               </p>
             </div>
-            <div className="bg-gradient-to-b from-pink-50 to-rose-50 rounded-2xl p-3 text-center">
+            <div className="bg-linear-to-b from-pink-50 to-rose-50 rounded-2xl p-3 text-center">
               <p className="text-2xl font-extrabold text-pink-600">
                 {earnedBadges.length}
               </p>
@@ -193,7 +193,7 @@ function BadgeCard({ badge, earned }: { badge: Badge; earned: boolean }) {
       whileHover={{ scale: 1.05 }}
       className={`rounded-2xl p-3 text-center transition-all ${
         earned
-          ? "bg-gradient-to-b from-amber-50 to-yellow-50 shadow-sm"
+          ? "bg-linear-to-b from-amber-50 to-yellow-50 shadow-sm"
           : "bg-gray-50 opacity-40"
       }`}
     >

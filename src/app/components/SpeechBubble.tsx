@@ -72,6 +72,13 @@ export default function SpeechBubble({
 }: SpeechBubbleProps) {
   const colors = bubbleColors[character];
   const isNarrator = character === "narrator";
+  const bubbleTailClass: Record<Character, string> = {
+    teacher: "bubble-tail bubble-tail-teacher",
+    ana: "bubble-tail bubble-tail-ana",
+    ben: "bubble-tail bubble-tail-ben",
+    students: "bubble-tail bubble-tail-ben",
+    narrator: "bubble-tail bubble-tail-narrator",
+  };
 
   return (
     <motion.div
@@ -85,20 +92,23 @@ export default function SpeechBubble({
       <div className="flex-1 min-w-0">
         {!isNarrator && <CharacterName character={character} />}
         <div
-          className={`relative rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-md ${
+          className={`relative rounded-2xl p-3 sm:p-4 ${
             isNarrator
               ? "italic text-center border-2 border-dashed"
-              : "border-2"
-          }`}
+              : `border-3 ${bubbleTailClass[character]}`
+          } ${isNarrator ? "comic-narrator-strip" : ""}`}
           style={{
             backgroundColor: colors.bg,
-            borderColor: colors.border,
+            borderColor: isNarrator ? "#b45309" : colors.border,
+            boxShadow: isNarrator
+              ? "4px 4px 0 rgba(180, 83, 9, 0.2), 0 6px 12px rgba(0,0,0,0.06)"
+              : `4px 4px 0 ${colors.border}44, 0 8px 16px rgba(17,24,39,0.08)`,
           }}
         >
           <p
             className={`${
               isNarrator ? "text-sm sm:text-base" : "text-base sm:text-lg"
-            } leading-relaxed wrap-break-word`}
+            } leading-relaxed wrap-break-word font-semibold`}
           >
             {highlightWords(text, highlightPattern, onWordClick)}
           </p>

@@ -1,10 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { CelebrationIllustration } from "./SceneIllustration";
 
 export default function EndPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[50vh] sm:min-h-[60vh] text-center px-3 sm:px-4">
+    <div className="relative flex flex-col items-center justify-center min-h-[50vh] sm:min-h-[60vh] text-center px-3 sm:px-4 overflow-hidden">
+      <div className="comic-burst" aria-hidden />
       {/* Celebration */}
       <motion.div
         initial={{ scale: 0 }}
@@ -19,17 +21,22 @@ export default function EndPage() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-4 sm:mb-6"
+        className="comic-title text-4xl sm:text-6xl font-extrabold text-gray-900 mb-4 sm:mb-6"
       >
         The End!
       </motion.h2>
+
+      {/* Celebration Illustration */}
+      <CelebrationIllustration />
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="app-card p-4 sm:p-6 max-w-lg mb-4 sm:mb-6 mx-2"
+        className="app-card p-4 sm:p-6 max-w-lg mb-4 sm:mb-6 mx-2 border-4 border-emerald-300 relative"
+        style={{ boxShadow: "6px 6px 0 #111827" }}
       >
+        <span className="sfx-tag left-4 -top-5">YAY!</span>
         <p className="text-base sm:text-xl text-gray-600 mb-3 sm:mb-4">
           📖 Ana and Ben became <strong>better readers</strong> because they
           learned <strong>word patterns</strong>.
@@ -71,7 +78,7 @@ export default function EndPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
-        className="bg-emerald-50 rounded-2xl p-4 sm:p-5 max-w-md shadow-sm mx-2"
+        className="bg-emerald-50 rounded-2xl p-4 sm:p-5 max-w-md shadow-sm mx-2 border-2 border-emerald-200"
       >
         <h3 className="font-extrabold text-emerald-700 text-base sm:text-lg mb-2 sm:mb-3">
           🌟 What We Learned:

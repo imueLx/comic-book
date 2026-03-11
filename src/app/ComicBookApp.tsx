@@ -82,7 +82,14 @@ export default function ComicBookApp({ onBack }: ComicBookAppProps) {
                   ←
                 </motion.button>
               )}
-              <h1 className="text-sm sm:text-xl font-extrabold text-gray-900 flex items-center gap-1 sm:gap-2">
+              <h1
+                className="text-sm sm:text-xl font-extrabold text-gray-900 flex items-center gap-1 sm:gap-2"
+                style={{
+                  fontFamily:
+                    "var(--font-comic), var(--font-baloo), sans-serif",
+                  letterSpacing: "0.03em",
+                }}
+              >
                 <span>📖</span>
                 <span className="hidden xs:inline">
                   The Word Pattern Adventure
@@ -103,11 +110,12 @@ export default function ComicBookApp({ onBack }: ComicBookAppProps) {
         <AnimatePresence mode="wait">
           <motion.div
             key={currentPage}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.35 }}
-            className="w-full"
+            initial={{ opacity: 0, x: 70, rotateY: 18, scale: 0.98 }}
+            animate={{ opacity: 1, x: 0, rotateY: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -70, rotateY: -18, scale: 0.98 }}
+            transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+            style={{ transformOrigin: "center" }}
+            className="w-full comic-page-wrapper comic-page-fold"
           >
             {page.isCover ? (
               <CoverPage />
