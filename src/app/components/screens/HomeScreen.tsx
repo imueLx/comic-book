@@ -5,6 +5,7 @@ import { LearnerProfile } from "../../lib/types";
 import { lessons } from "../../data/lessons";
 import TomMascot from "../TomMascot";
 import StarRating from "../StarRating";
+import InstallPrompt from "../InstallPrompt";
 
 interface HomeScreenProps {
   profile: LearnerProfile;
@@ -60,6 +61,11 @@ export default function HomeScreen({
 
       {/* Scrollable content */}
       <div className="flex-1 px-5 pt-3 pb-28 max-w-lg mx-auto w-full overflow-y-auto">
+        {/* Install App — top priority */}
+        <div className="mb-5">
+          <InstallPrompt variant="hero" />
+        </div>
+
         {/* Quick stats row */}
         <div className="grid grid-cols-3 gap-2.5 mb-5">
           {[

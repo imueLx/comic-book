@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { AppSettings } from "../../lib/types";
+import InstallPrompt from "../InstallPrompt";
 
 interface SettingsScreenProps {
   settings: AppSettings;
@@ -137,6 +138,9 @@ export default function SettingsScreen({
             </div>
           </div>
         </motion.div>
+
+        {/* Install App */}
+        <InstallPrompt variant="card" />
 
         {/* Save */}
         <motion.button
