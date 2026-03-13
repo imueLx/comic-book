@@ -42,7 +42,7 @@ function detectState(): InstallState {
 export default function InstallPrompt({
   variant = "banner",
 }: {
-  variant?: "banner" | "card" | "hero";
+  variant?: "banner" | "card" | "hero" | "mini";
 }) {
   const [state, setState] = useState<InstallState>("hidden");
   const [deferredPrompt, setDeferredPrompt] =
@@ -84,6 +84,70 @@ export default function InstallPrompt({
 
   if (state === "hidden" || dismissed) return null;
 
+  if (variant === "mini") {
+    if (state === "installable") {
+      return (
+        <AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="app-card relative px-3 py-2.5"
+          >
+            <button
+              onClick={() => setDismissed(true)}
+              className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] text-gray-500 cursor-pointer"
+              aria-label="Dismiss"
+            >
+              ✕
+            </button>
+            <div className="flex items-center gap-2.5 pr-6">
+              <span className="text-base" aria-hidden="true">
+                📲
+              </span>
+              <p className="text-xs font-bold text-gray-700 flex-1">
+                Install for faster opening
+              </p>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={handleInstall}
+                className="px-3 py-1.5 rounded-lg bg-linear-to-b from-violet-500 to-purple-600 text-white font-bold text-xs min-h-9 cursor-pointer shadow-sm"
+              >
+                Install
+              </motion.button>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      );
+    }
+
+    if (state === "ios-safari") {
+      return (
+        <AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="app-card relative px-3 py-2.5"
+          >
+            <button
+              onClick={() => setDismissed(true)}
+              className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] text-gray-500 cursor-pointer"
+              aria-label="Dismiss"
+            >
+              ✕
+            </button>
+            <p className="text-xs text-gray-700 font-semibold pr-6">
+              Install tip: Safari Share then Add to Home Screen.
+            </p>
+          </motion.div>
+        </AnimatePresence>
+      );
+    }
+
+    return null;
+  }
+
   // ── Hero variant: big prominent card at the top of the page ──
   if (variant === "hero") {
     return (
@@ -109,7 +173,7 @@ export default function InstallPrompt({
             ✕
           </button>
 
-          <div className="relative z-[1]">
+          <div className="relative z-1">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20 shadow-lg">
                 <span className="text-3xl">📲</span>

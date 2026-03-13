@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface SplashScreenProps {
   onFinish: () => void;
@@ -9,20 +9,32 @@ interface SplashScreenProps {
 
 export default function SplashScreen({ onFinish }: SplashScreenProps) {
   const [step, setStep] = useState(0);
+  const doneRef = useRef(false);
+
+  const finishOnce = useCallback(() => {
+    if (doneRef.current) return;
+    doneRef.current = true;
+    onFinish();
+  }, [onFinish]);
 
   useEffect(() => {
     const t1 = setTimeout(() => setStep(1), 500);
-    const t2 = setTimeout(() => setStep(2), 1200);
-    const t3 = setTimeout(() => onFinish(), 3000);
+    const t2 = setTimeout(() => setStep(2), 1000);
+    const t3 = setTimeout(() => finishOnce(), 1800);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
     };
-  }, [onFinish]);
+  }, [finishOnce]);
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center px-6 bg-linear-to-br from-violet-600 via-purple-600 to-indigo-700 relative overflow-hidden">
+    <div
+      className="min-h-dvh flex flex-col items-center justify-center px-6 bg-linear-to-br from-violet-600 via-purple-600 to-indigo-700 relative overflow-hidden cursor-pointer"
+      onClick={finishOnce}
+      role="button"
+      aria-label="Skip intro"
+    >
       {/* Ambient blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
@@ -34,7 +46,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
         initial={{ scale: 0, rotate: -180 }}
         animate={{ scale: 1, rotate: 0 }}
         transition={{ type: "spring", stiffness: 180, damping: 14 }}
-        className="w-28 h-28 sm:w-36 sm:h-36 rounded-[32px] bg-white/15 backdrop-blur-sm flex items-center justify-center mb-6 border border-white/20 shadow-2xl"
+        className="w-28 h-28 sm:w-36 sm:h-36 rounded-4xl bg-white/15 backdrop-blur-sm flex items-center justify-center mb-6 border border-white/20 shadow-2xl"
       >
         <span className="text-6xl sm:text-7xl">📖</span>
       </motion.div>
@@ -102,6 +114,20 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
           />
         ))}
       </motion.div>
+
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          finishOnce();
+        }}
+        className="mt-5 text-[11px] font-bold text-white/75 underline underline-offset-2 cursor-pointer"
+      >
+        Skip
+      </button>
+
+      <p className="mt-2 text-[10px] text-white/55 font-semibold">
+        Tap anywhere to continue
+      </p>
     </div>
   );
 }

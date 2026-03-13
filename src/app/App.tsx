@@ -45,12 +45,20 @@ export default function App() {
     const frame = requestAnimationFrame(() => {
       setMounted(true);
       const existing = getActiveProfile();
+      const onboarded = hasSeenOnboarding();
+
       if (existing) {
         setProfile(existing);
         if (existing.settings?.playbackSpeed) {
           setPlaybackSpeed(existing.settings.playbackSpeed);
         }
       }
+
+      // Returning users should land directly on content instead of waiting on splash.
+      if (onboarded) {
+        setScreen(existing ? "home" : "profile");
+      }
+
       warmupSpeechVoices();
     });
 
