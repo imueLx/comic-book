@@ -58,6 +58,15 @@ export const lessons: Lesson[] = [
     activities: ["cc-sentence-1", "cc-sentence-2", "cc-tap-1"],
     unlockAfter: 5,
   },
+  {
+    id: 7,
+    title: "Reading Fluency and Comprehension",
+    subtitle: "Extra practice with sounds, rhyme, and word meanings",
+    icon: "📘",
+    comicPages: [13, 14],
+    activities: ["rfc-spelling-1", "rfc-rhyme-1", "rfc-meaning-1"],
+    unlockAfter: 6,
+  },
 ];
 
 export const badges: Badge[] = [
@@ -78,9 +87,9 @@ export const badges: Badge[] = [
   {
     id: "all-lessons",
     title: "Word Pattern Master",
-    description: "Complete all 6 lessons",
+    description: "Complete all 7 lessons",
     icon: "👑",
-    requirement: { type: "lessons", count: 6 },
+    requirement: { type: "lessons", count: 7 },
   },
   {
     id: "five-stars",

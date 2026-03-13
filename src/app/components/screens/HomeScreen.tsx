@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { LearnerProfile } from "../../lib/types";
 import { lessons } from "../../data/lessons";
+import { comicPages } from "../../data/comicPages";
 import TomMascot from "../TomMascot";
 import StarRating from "../StarRating";
 import InstallPrompt from "../InstallPrompt";
@@ -26,6 +27,7 @@ export default function HomeScreen({
     lessons.find((l) => l.id === profile.currentLesson) || lessons[0];
   const completedCount = profile.lessonsCompleted;
   const totalLessons = lessons.length;
+  const totalComicPages = comicPages.length;
 
   return (
     <div className="app-shell min-h-dvh flex flex-col">
@@ -127,8 +129,8 @@ export default function HomeScreen({
               </div>
             </div>
             <p className="text-sm text-emerald-100 mb-4">
-              Read the full 12-page comic story with Teacher Mia, Ana, Ben & Tom
-              the Cat!
+              Read the full {totalComicPages}-page comic story with Teacher Mia,
+              Ana, Ben & Tom the Cat!
             </p>
             <motion.button
               whileTap={{ scale: 0.97 }}

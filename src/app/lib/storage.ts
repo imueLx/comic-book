@@ -19,9 +19,21 @@ const defaultSettings: AppSettings = {
   playbackSpeed: "normal",
 };
 
+function generateProfileId(): string {
+  if (typeof globalThis !== "undefined") {
+    const c = globalThis.crypto;
+    if (c && typeof c.randomUUID === "function") {
+      return c.randomUUID();
+    }
+  }
+
+  // Fallback for older webviews/devices without crypto.randomUUID.
+  return `profile-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
 function createDefaultProfile(name: string, avatar: string): LearnerProfile {
   return {
-    id: crypto.randomUUID(),
+    id: generateProfileId(),
     name,
     avatar,
     createdAt: new Date().toISOString(),

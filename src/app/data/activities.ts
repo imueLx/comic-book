@@ -227,6 +227,44 @@ export const activities: Activity[] = [
     hint: "Which animal lives in water and can swim?",
     skillArea: "contextClues",
   },
+
+  // Lesson 7: Reading fluency and comprehension
+  {
+    id: "rfc-spelling-1",
+    lessonId: 7,
+    type: "tapCorrectWord",
+    title: "Spelling Check!",
+    instruction: "Tap the correctly spelled word.",
+    prompt: "Which word is spelled correctly?",
+    correctAnswer: "cat",
+    options: ["cat", "kat", "cot", "cta"],
+    hint: "Tom's name starts with c-a-t.",
+    skillArea: "wordFamily_at",
+  },
+  {
+    id: "rfc-rhyme-1",
+    lessonId: 7,
+    type: "tapCorrectWord",
+    title: "Rhyming Words",
+    instruction: "Pick the word that rhymes with cake.",
+    prompt: "Which word rhymes with cake?",
+    correctAnswer: "lake",
+    options: ["ball", "lake", "dog", "run"],
+    hint: "Cake and lake sound the same at the end.",
+    skillArea: "sentenceReading",
+  },
+  {
+    id: "rfc-meaning-1",
+    lessonId: 7,
+    type: "tapCorrectWord",
+    title: "Word Meaning",
+    instruction: "Choose the word that means the same as big.",
+    prompt: "Which word means the same as big?",
+    correctAnswer: "large",
+    options: ["sad", "dog", "large", "run"],
+    hint: "Large means big.",
+    skillArea: "contextClues",
+  },
 ];
 
 export function getActivitiesForLesson(lessonId: number): Activity[] {

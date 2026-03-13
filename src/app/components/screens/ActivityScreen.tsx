@@ -38,6 +38,7 @@ export default function ActivityScreen({
   const [sortedFamily1, setSortedFamily1] = useState<string[]>([]);
   const [sortedFamily2, setSortedFamily2] = useState<string[]>([]);
   const [unsortedWords, setUnsortedWords] = useState<string[]>([]);
+  const [sortFeedback, setSortFeedback] = useState<string>("");
 
   // Match state
   const [matchedPairs, setMatchedPairs] = useState<Set<string>>(new Set());
@@ -56,6 +57,7 @@ export default function ActivityScreen({
       setUnsortedWords([...act.allWords].sort(() => Math.random() - 0.5));
       setSortedFamily1([]);
       setSortedFamily2([]);
+      setSortFeedback("");
     }
     if (act.type === "matchWords") {
       setMatchedPairs(new Set());
@@ -139,6 +141,7 @@ export default function ActivityScreen({
         if (familyIdx === 1) setSortedFamily1((prev) => [...prev, word]);
         else setSortedFamily2((prev) => [...prev, word]);
         if (audioEnabled) speakWord(word);
+        setSortFeedback("Nice! Great sorting!");
 
         // Check if all sorted
         const remaining = unsortedWords.length - 1;
@@ -147,7 +150,10 @@ export default function ActivityScreen({
         }
       } else {
         setAttempts((a) => a + 1);
+        setSortFeedback("Try again. Listen to the ending sound.");
       }
+
+      setTimeout(() => setSortFeedback(""), 1200);
     },
     [activity, unsortedWords, handleCorrectAnswer, audioEnabled],
   );
@@ -306,6 +312,7 @@ export default function ActivityScreen({
                       key={opt}
                       word={opt}
                       showAudio={audioEnabled}
+                      showIcon={true}
                       selected={selected === opt}
                       correct={selected === opt ? isCorrect : null}
                       disabled={isCorrect === true}
@@ -328,6 +335,7 @@ export default function ActivityScreen({
                       key={opt}
                       word={opt}
                       showAudio={audioEnabled}
+                      showIcon={true}
                       selected={selected === opt}
                       correct={selected === opt ? isCorrect : null}
                       disabled={isCorrect === true}
@@ -352,6 +360,7 @@ export default function ActivityScreen({
                     <WordCard
                       key={opt}
                       word={opt}
+                      showIcon={true}
                       selected={selected === opt}
                       correct={selected === opt ? isCorrect : null}
                       disabled={isCorrect === true}
@@ -367,25 +376,39 @@ export default function ActivityScreen({
               activity.family1 &&
               activity.family2 && (
                 <div className="app-card p-5">
-                  <div className="flex flex-wrap gap-2 justify-center mb-5">
-                    {unsortedWords.map((w) => (
-                      <WordCard
-                        key={w}
-                        word={w}
-                        showAudio={audioEnabled}
-                        size="sm"
-                      />
-                    ))}
+                  <p className="text-center text-sm font-semibold text-gray-600 mb-3">
+                    Step 1: Tap the word. Step 2: Tap the right family.
+                  </p>
+
+                  <div className="rounded-2xl border-2 border-dashed border-violet-300 bg-violet-50 p-3 mb-4">
+                    <p className="text-xs font-bold text-violet-700 text-center uppercase tracking-wider mb-2">
+                      Word to Sort
+                    </p>
+                    {unsortedWords.length > 0 ? (
+                      <div className="max-w-48 mx-auto">
+                        <WordCard
+                          word={unsortedWords[0]}
+                          showAudio={audioEnabled}
+                          showIcon={true}
+                          size="lg"
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-center text-emerald-700 font-bold">
+                        All words sorted!
+                      </p>
+                    )}
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+
+                  <div className="grid grid-cols-2 gap-3 mb-3">
                     <motion.div
                       whileTap={{ scale: 0.98 }}
-                      className="bg-linear-to-b from-pink-50 to-rose-50 rounded-2xl p-3.5 min-h-25 cursor-pointer border-2 border-pink-200"
+                      className="bg-linear-to-b from-pink-50 to-rose-50 rounded-2xl p-3.5 min-h-32 cursor-pointer border-2 border-pink-200"
                       onClick={() =>
                         unsortedWords[0] && handleSortWord(unsortedWords[0], 1)
                       }
                     >
-                      <p className="text-center font-extrabold text-pink-600 text-sm mb-2">
+                      <p className="text-center font-extrabold text-pink-600 text-lg mb-2">
                         {activity.family1.pattern}
                       </p>
                       <div className="flex flex-wrap gap-1.5">
@@ -398,20 +421,18 @@ export default function ActivityScreen({
                           </span>
                         ))}
                       </div>
-                      {unsortedWords.length > 0 && (
-                        <p className="text-[10px] text-pink-400 text-center mt-2">
-                          Tap word, then here
-                        </p>
-                      )}
+                      <p className="text-[11px] text-pink-500 text-center mt-2 font-semibold">
+                        Put word here
+                      </p>
                     </motion.div>
                     <motion.div
                       whileTap={{ scale: 0.98 }}
-                      className="bg-linear-to-b from-blue-50 to-indigo-50 rounded-2xl p-3.5 min-h-25 cursor-pointer border-2 border-blue-200"
+                      className="bg-linear-to-b from-blue-50 to-indigo-50 rounded-2xl p-3.5 min-h-32 cursor-pointer border-2 border-blue-200"
                       onClick={() =>
                         unsortedWords[0] && handleSortWord(unsortedWords[0], 2)
                       }
                     >
-                      <p className="text-center font-extrabold text-blue-600 text-sm mb-2">
+                      <p className="text-center font-extrabold text-blue-600 text-lg mb-2">
                         {activity.family2.pattern}
                       </p>
                       <div className="flex flex-wrap gap-1.5">
@@ -424,13 +445,17 @@ export default function ActivityScreen({
                           </span>
                         ))}
                       </div>
-                      {unsortedWords.length > 0 && (
-                        <p className="text-[10px] text-blue-400 text-center mt-2">
-                          Tap word, then here
-                        </p>
-                      )}
+                      <p className="text-[11px] text-blue-500 text-center mt-2 font-semibold">
+                        Put word here
+                      </p>
                     </motion.div>
                   </div>
+
+                  {sortFeedback && (
+                    <p className="text-center text-sm font-bold text-violet-700">
+                      {sortFeedback}
+                    </p>
+                  )}
                 </div>
               )}
 

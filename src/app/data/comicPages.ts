@@ -1,4 +1,10 @@
-export type Character = "teacher" | "ana" | "ben" | "narrator" | "students";
+export type Character =
+  | "teacher"
+  | "ana"
+  | "ben"
+  | "tom"
+  | "narrator"
+  | "students";
 
 export interface DialogLine {
   character: Character;
@@ -72,7 +78,7 @@ export const comicPages: ComicPage[] = [
       },
       {
         character: "ana",
-        text: "They all end with –at!",
+        text: "They all end with -at!",
       },
     ],
     boardWords: ["Cat", "Bat", "Hat", "Mat"],
@@ -283,5 +289,137 @@ export const comicPages: ComicPage[] = [
         text: "Hooray for reading!",
       },
     ],
+  },
+  {
+    pageNumber: 13,
+    title: "Reading Fluency",
+    background: "bg-linear-to-b from-sky to-mint",
+    scene: "classroom",
+    dialog: [
+      {
+        character: "narrator",
+        text: "In the classroom, Teacher Mia holds a book while Ben, Ana, and Tom the Cat listen.",
+      },
+      {
+        character: "teacher",
+        text: "Today we will practice reading fluency!",
+      },
+      {
+        character: "ben",
+        text: "That sounds fun!",
+      },
+      {
+        character: "tom",
+        text: "Meow! I love words!",
+      },
+      {
+        character: "teacher",
+        text: "Which word is spelled correctly?",
+      },
+      {
+        character: "ben",
+        text: "I think the answer is cat!",
+      },
+      {
+        character: "tom",
+        text: "Meow! That's my name!",
+      },
+      {
+        character: "teacher",
+        text: "Which word rhymes with cake?",
+      },
+      {
+        character: "ana",
+        text: "Lake! Cake and lake sound the same!",
+      },
+      {
+        character: "teacher",
+        text: "Which word begins with the sound /b/?",
+      },
+      {
+        character: "ben",
+        text: "Ball!",
+      },
+      {
+        character: "teacher",
+        text: "Which word has the same ending sound as light?",
+      },
+      {
+        character: "ana",
+        text: "Night!",
+      },
+      {
+        character: "teacher",
+        text: "Very good! You are improving your reading fluency!",
+      },
+    ],
+    boardWords: ["cat", "cake", "lake", "ball", "light", "night"],
+    boardLabel: "Reading Fluency Practice",
+  },
+  {
+    pageNumber: 14,
+    title: "Reading Comprehension",
+    background: "bg-linear-to-b from-lavender to-peach",
+    scene: "classroom-board",
+    dialog: [
+      {
+        character: "teacher",
+        text: "Now let's learn about word meanings.",
+      },
+      {
+        character: "teacher",
+        text: "Which word means the same as big?",
+      },
+      {
+        character: "ben",
+        text: "Large!",
+      },
+      {
+        character: "teacher",
+        text: "What is the opposite of happy?",
+      },
+      {
+        character: "ana",
+        text: "Sad.",
+      },
+      {
+        character: "teacher",
+        text: "Which word tells about an animal?",
+      },
+      {
+        character: "ben",
+        text: "Dog!",
+      },
+      {
+        character: "tom",
+        text: "Meow! Cats too!",
+      },
+      {
+        character: "teacher",
+        text: "Which word means to move fast on foot?",
+      },
+      {
+        character: "ana",
+        text: "Run!",
+      },
+      {
+        character: "teacher",
+        text: "Excellent! You learned many new words today!",
+      },
+      {
+        character: "ben",
+        text: "Reading is fun!",
+      },
+      {
+        character: "ana",
+        text: "Let's practice every day!",
+      },
+      {
+        character: "tom",
+        text: "Meow! I love reading too!",
+      },
+    ],
+    boardWords: ["big", "large", "happy", "sad", "dog", "run"],
+    boardLabel: "Word Meanings",
   },
 ];

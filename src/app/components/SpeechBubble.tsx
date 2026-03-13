@@ -16,6 +16,7 @@ const bubbleColors: Record<Character, { bg: string; border: string }> = {
   teacher: { bg: "#D4F1F9", border: "#4FC3F7" },
   ana: { bg: "#FFE4F0", border: "#F48FB1" },
   ben: { bg: "#E8F5E9", border: "#81C784" },
+  tom: { bg: "#FFF3D4", border: "#F59E0B" },
   students: { bg: "#FFF3E0", border: "#FFB74D" },
   narrator: { bg: "#FFF9C4", border: "#FFD54F" },
 };
@@ -76,6 +77,7 @@ export default function SpeechBubble({
     teacher: "bubble-tail bubble-tail-teacher",
     ana: "bubble-tail bubble-tail-ana",
     ben: "bubble-tail bubble-tail-ben",
+    tom: "bubble-tail bubble-tail-ana",
     students: "bubble-tail bubble-tail-ben",
     narrator: "bubble-tail bubble-tail-narrator",
   };

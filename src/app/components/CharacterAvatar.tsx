@@ -30,6 +30,12 @@ const characterConfig: Record<
     emoji: "👦",
     borderColor: "#388E3C",
   },
+  tom: {
+    name: "Tom the Cat",
+    bgColor: "#FCD34D",
+    emoji: "🐱",
+    borderColor: "#D97706",
+  },
   students: {
     name: "Students",
     bgColor: "#FFD54F",
@@ -59,6 +65,7 @@ export default function CharacterAvatar({
     teacher: -4,
     ana: -2,
     ben: 3,
+    tom: 1,
     students: 0,
     narrator: 0,
   };

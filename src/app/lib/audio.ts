@@ -6,6 +6,15 @@ let speechSynthRef: SpeechSynthesis | null = null;
 let speedMultiplier = 1.0;
 let speechAvailable: boolean | null = null;
 
+function reportSpeechIssue(code: string) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent("app:speech-issue", {
+      detail: { code },
+    }),
+  );
+}
+
 function getSpeech(): SpeechSynthesis | null {
   if (typeof window === "undefined") return null;
   if (!speechSynthRef) {
@@ -115,14 +124,16 @@ export function warmupSpeechVoices() {
 }
 
 export function speak(text: string, rate = 0.88, pitch = 1.18): Promise<void> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     if (!isSpeechSupported()) {
-      reject(new Error("speech-not-supported"));
+      reportSpeechIssue("speech-not-supported");
+      resolve();
       return;
     }
     const synth = getSpeech();
     if (!synth) {
-      reject(new Error("speech-not-available"));
+      reportSpeechIssue("speech-not-available");
+      resolve();
       return;
     }
 
@@ -157,11 +168,19 @@ export function speak(text: string, rate = 0.88, pitch = 1.18): Promise<void> {
 
       utterance.onend = () => resolve();
       utterance.onerror = (e) => {
-        // "interrupted" and "canceled" are expected (e.g. user navigated away)
-        if (e.error === "interrupted" || e.error === "canceled") {
+        // Most TTS errors should be non-fatal for app flow.
+        if (
+          e.error === "interrupted" ||
+          e.error === "canceled" ||
+          e.error === "not-allowed" ||
+          e.error === "audio-busy" ||
+          e.error === "audio-hardware"
+        ) {
+          reportSpeechIssue(e.error || "speech-error");
           resolve();
         } else {
-          reject(new Error(e.error || "speech-error"));
+          reportSpeechIssue(e.error || "speech-error");
+          resolve();
         }
       };
       synth.speak(utterance);
@@ -205,6 +224,7 @@ export function narrateDialog(character: string, text: string): Promise<void> {
     teacher: 0.86,
     ana: 0.92,
     ben: 0.9,
+    tom: 0.95,
     narrator: 0.82,
     students: 0.9,
   };
@@ -212,6 +232,7 @@ export function narrateDialog(character: string, text: string): Promise<void> {
     teacher: 1.05,
     ana: 1.1,
     ben: 1.05,
+    tom: 1.2,
     narrator: 0.98,
     students: 1.08,
   };

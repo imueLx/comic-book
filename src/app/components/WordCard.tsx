@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import AudioButton from "./AudioButton";
+import WordVisualIcon from "./WordVisualIcon";
+import { getWordIconKey } from "../lib/wordVisuals";
 
 interface WordCardProps {
   word: string;
@@ -11,6 +13,7 @@ interface WordCardProps {
   correct?: boolean | null;
   disabled?: boolean;
   showAudio?: boolean;
+  showIcon?: boolean;
   size?: "sm" | "md" | "lg";
 }
 
@@ -28,6 +31,7 @@ export default function WordCard({
   correct = null,
   disabled = false,
   showAudio = false,
+  showIcon = false,
   size = "md",
 }: WordCardProps) {
   let borderColor = "border-gray-200";
@@ -74,14 +78,23 @@ export default function WordCard({
       whileTap={!disabled ? { scale: 0.95 } : {}}
       onClick={disabled ? undefined : onClick}
       aria-disabled={disabled}
-      className={`${cardSizes[size]} ${bgColor} ${borderColor} rounded-2xl border-2 shadow-sm font-bold min-h-12 min-w-16 flex items-center gap-2 justify-center transition-all cursor-pointer ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
+      className={`${cardSizes[size]} ${bgColor} ${borderColor} rounded-2xl border-2 shadow-sm font-bold min-h-12 min-w-16 flex items-center gap-2 justify-center transition-all cursor-pointer ${showIcon ? "flex-col py-3 px-3 min-h-24" : ""} ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
     >
       {showAudio && (
         <span onClick={(e) => e.stopPropagation()}>
           <AudioButton word={word} size="sm" />
         </span>
       )}
-      <span>{renderWord()}</span>
+      {showIcon && (
+        <WordVisualIcon
+          iconKey={getWordIconKey(word)}
+          label={word}
+          className="h-9 w-9"
+        />
+      )}
+      <span className={showIcon ? "text-base leading-tight" : ""}>
+        {renderWord()}
+      </span>
     </motion.div>
   );
 }

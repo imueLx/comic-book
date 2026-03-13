@@ -182,8 +182,8 @@ export default function ComicBookApp({ onBack }: ComicBookAppProps) {
                 You finished the entire comic book!
               </p>
               <p className="text-sm text-gray-500 mb-6">
-                You read all 12 pages of &quot;The Word Pattern Adventure&quot;
-                — you&apos;re a reading superstar!
+                You read all {totalPages} pages of &quot;The Word Pattern
+                Adventure&quot; — you&apos;re a reading superstar!
               </p>
 
               <div className="flex gap-3 mb-3">
