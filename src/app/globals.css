@@ -184,6 +184,90 @@ body {
   background: #f3f4f6;
 }
 
+.kid-btn {
+  min-height: 48px;
+  border-radius: 16px;
+  font-weight: 800;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.14s ease,
+    filter 0.14s ease;
+}
+
+.kid-btn:active {
+  transform: scale(0.97);
+}
+
+.kid-btn-primary {
+  background: linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #ffffff;
+  border-color: #c4b5fd;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.28);
+}
+
+.kid-btn-success {
+  background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
+  color: #ffffff;
+  border-color: #86efac;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.kid-btn-neutral {
+  background: #f3f4f6;
+  color: #374151;
+  border-color: #e5e7eb;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.kid-back-btn {
+  min-height: 48px;
+  padding: 0 12px 0 6px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  color: #475569;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  transition: transform 0.14s ease;
+}
+
+.kid-back-btn:active {
+  transform: scale(0.97);
+}
+
+.kid-back-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #4f46e5;
+  font-size: 16px;
+}
+
+.kid-choice-btn {
+  min-height: 96px;
+  border-radius: 16px;
+  border: 2px solid #ddd6fe;
+  background: #f5f3ff;
+  color: #1f2937;
+  font-weight: 800;
+  transition: transform 0.14s ease;
+}
+
+.kid-choice-btn:active {
+  transform: scale(0.98);
+}
+
 .soft-chip {
   background: #f5f3ff;
   border: none;

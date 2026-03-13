@@ -26,10 +26,10 @@ export default function Navigation({
         whileTap={!isFirst ? { scale: 0.93 } : {}}
         onClick={onPrev}
         disabled={isFirst}
-        className={`flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl font-extrabold text-base shadow-sm min-h-13 min-w-[88px] ${
+        className={`kid-btn flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 text-base min-h-13 min-w-22 ${
           isFirst
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-            : "bg-white text-gray-700 cursor-pointer active:bg-gray-50 border-2 border-gray-200"
+            ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed shadow-none"
+            : "kid-btn-neutral"
         }`}
       >
         <span className="text-lg">←</span>
@@ -55,8 +55,7 @@ export default function Navigation({
         <motion.button
           whileTap={{ scale: 0.93 }}
           onClick={onDone}
-          className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl font-extrabold text-base shadow-md min-h-13 min-w-[88px] bg-linear-to-b from-emerald-400 to-emerald-600 text-white cursor-pointer active:from-emerald-500 active:to-emerald-700 border-2 border-emerald-300"
-          style={{ boxShadow: "0 4px 12px rgba(16,185,129,0.35)" }}
+          className="kid-btn kid-btn-success flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 text-base min-h-13 min-w-22"
         >
           <span>Done!</span>
           <span className="text-lg">🎉</span>
@@ -65,8 +64,7 @@ export default function Navigation({
         <motion.button
           whileTap={{ scale: 0.93 }}
           onClick={onNext}
-          className="flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl font-extrabold text-base shadow-md min-h-13 min-w-[88px] bg-linear-to-b from-violet-500 to-purple-600 text-white cursor-pointer active:from-violet-600 active:to-purple-700 border-2 border-violet-300"
-          style={{ boxShadow: "0 4px 12px rgba(139,92,246,0.35)" }}
+          className="kid-btn kid-btn-primary flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 text-base min-h-13 min-w-22"
         >
           <span>Next</span>
           <span className="text-lg">→</span>

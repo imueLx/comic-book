@@ -249,9 +249,11 @@ export default function ActivityScreen({
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={onBack}
-            className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-sm cursor-pointer"
+            aria-label="Go back"
+            className="kid-back-btn"
           >
-            ←
+            <span className="kid-back-icon">←</span>
+            <span className="text-xs">Back</span>
           </motion.button>
           <div className="flex items-center gap-2">
             <span className="soft-chip text-xs font-bold px-2.5 py-1 rounded-full">
@@ -538,7 +540,7 @@ export default function ActivityScreen({
                   <motion.button
                     whileTap={{ scale: 0.97 }}
                     onClick={goNextActivity}
-                    className="px-8 py-3 primary-btn rounded-2xl font-bold min-h-12 cursor-pointer"
+                    className="kid-btn kid-btn-primary px-8 py-3 min-h-12"
                   >
                     {isLast ? "See Results ⭐" : "Next →"}
                   </motion.button>
@@ -566,7 +568,7 @@ export default function ActivityScreen({
                         setSelected(null);
                         setIsCorrect(null);
                       }}
-                      className="px-5 py-2.5 rounded-2xl bg-gray-100 font-bold text-sm min-h-11 cursor-pointer text-gray-700"
+                      className="kid-btn kid-btn-neutral px-5 py-2.5 text-sm min-h-11"
                     >
                       Try Again
                     </motion.button>

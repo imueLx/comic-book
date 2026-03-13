@@ -79,9 +79,11 @@ export default function ComicBookApp({ onBack }: ComicBookAppProps) {
                 <motion.button
                   whileTap={{ scale: 0.93 }}
                   onClick={onBack}
-                  className="w-11 h-11 rounded-xl bg-gray-100 flex items-center justify-center text-lg cursor-pointer active:bg-gray-200"
+                  aria-label="Go back"
+                  className="kid-back-btn"
                 >
-                  ←
+                  <span className="kid-back-icon">←</span>
+                  <span className="text-xs">Back</span>
                 </motion.button>
               )}
               <h1
@@ -193,7 +195,7 @@ export default function ComicBookApp({ onBack }: ComicBookAppProps) {
                     setShowCompletion(false);
                     setCurrentPage(1);
                   }}
-                  className="flex-1 py-3.5 rounded-2xl bg-gray-100 font-extrabold text-gray-700 text-base cursor-pointer min-h-13 active:bg-gray-200"
+                  className="kid-btn kid-btn-neutral flex-1 py-3.5 text-base min-h-13"
                 >
                   📖 Read Again
                 </motion.button>
@@ -203,7 +205,7 @@ export default function ComicBookApp({ onBack }: ComicBookAppProps) {
                     setShowCompletion(false);
                     onBack?.();
                   }}
-                  className="flex-1 py-3.5 rounded-2xl bg-linear-to-b from-emerald-400 to-emerald-600 font-extrabold text-white text-base cursor-pointer min-h-13 shadow-md active:from-emerald-500 active:to-emerald-700"
+                  className="kid-btn kid-btn-success flex-1 py-3.5 text-base min-h-13"
                 >
                   ✅ Done!
                 </motion.button>

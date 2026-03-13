@@ -133,9 +133,11 @@ export default function ComicReaderScreen({
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={onBack}
-              className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-sm cursor-pointer"
+              aria-label="Go back"
+              className="kid-back-btn"
             >
-              ←
+              <span className="kid-back-icon">←</span>
+              <span className="text-xs">Back</span>
             </motion.button>
             <div className="flex items-center gap-1.5">
               <span className="text-sm">

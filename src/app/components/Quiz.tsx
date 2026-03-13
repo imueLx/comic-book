@@ -58,7 +58,7 @@ export default function Quiz({
       <div className={`grid ${gridColsClass} gap-2 sm:gap-3`}>
         {options.map((option) => {
           let buttonClass =
-            "rounded-2xl text-base sm:text-lg font-extrabold border-2 transition-all min-h-24 p-2.5 flex flex-col items-center justify-center gap-1.5 ";
+            "kid-choice-btn text-base sm:text-lg min-h-24 p-2.5 flex flex-col items-center justify-center gap-1.5 ";
 
           if (selected === option) {
             buttonClass += isCorrect
@@ -67,8 +67,7 @@ export default function Quiz({
           } else if (selected) {
             buttonClass += "bg-gray-100 border-gray-200 text-gray-400";
           } else {
-            buttonClass +=
-              "bg-violet-50 border-violet-200 text-gray-800 hover:bg-violet-100 hover:scale-102 cursor-pointer";
+            buttonClass += "hover:bg-violet-100 hover:scale-102 cursor-pointer";
           }
 
           return (
@@ -121,7 +120,7 @@ export default function Quiz({
                 setSelected(null);
                 setIsCorrect(null);
               }}
-              className="mt-2 px-4 py-2 bg-violet-100 text-violet-700 rounded-full font-bold cursor-pointer"
+              className="kid-btn kid-btn-neutral mt-2 px-4 py-2 text-violet-700"
             >
               Try Again
             </motion.button>
