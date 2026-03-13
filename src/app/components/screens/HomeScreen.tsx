@@ -23,12 +23,13 @@ export default function HomeScreen({
   onViewProgress,
   onViewSettings,
 }: HomeScreenProps) {
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline, setIsOnline] = useState(
+    typeof window === "undefined" ? true : window.navigator.onLine,
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    setIsOnline(window.navigator.onLine);
     const markOnline = () => setIsOnline(true);
     const markOffline = () => setIsOnline(false);
 
@@ -89,7 +90,7 @@ export default function HomeScreen({
               <p className="text-xs text-gray-500 font-semibold">
                 {completedCount === 0
                   ? "Ready to read?"
-                  : "Ready for today's story?"}
+                  : "Ready for today&apos;s story?"}
               </p>
             </div>
           </div>
@@ -103,7 +104,7 @@ export default function HomeScreen({
         {!isOnline && (
           <div className="mb-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50 p-3.5">
             <p className="text-sm font-extrabold text-emerald-800">
-              You're offline. You can still read! 📚
+              You&apos;re offline. You can still read! 📚
             </p>
             <p className="text-xs text-emerald-700 mt-1">
               Saved stories and lessons are ready on this device.
@@ -121,7 +122,7 @@ export default function HomeScreen({
             <div className="mb-2">
               <div>
                 <p className="text-orange-100 text-xs font-bold uppercase tracking-wider mb-1">
-                  Today's Story
+                  Today&apos;s Story
                 </p>
                 <h3 className="text-xl sm:text-2xl font-extrabold text-white leading-tight">
                   📖 The Word Pattern Adventure

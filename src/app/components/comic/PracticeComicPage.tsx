@@ -15,13 +15,6 @@ const speakerName = {
   students: "Students",
 };
 
-const speakerEmoji = {
-  teacher: "👩‍🏫",
-  ana: "👧",
-  ben: "👦",
-  students: "🧒",
-};
-
 const bubbleClass = {
   teacher: "bg-sky-100 border-sky-700",
   ana: "bg-pink-100 border-pink-700",

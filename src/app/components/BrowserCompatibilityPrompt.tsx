@@ -15,14 +15,13 @@ function shouldShowPrompt(info: BrowserSupportInfo): boolean {
 }
 
 export default function BrowserCompatibilityPrompt() {
-  const [info, setInfo] = useState<BrowserSupportInfo | null>(null);
+  const info = useMemo<BrowserSupportInfo | null>(
+    () => (typeof window === "undefined" ? null : getBrowserSupportInfo()),
+    [],
+  );
   const [dismissed, setDismissed] = useState(false);
   const [speechIssueSeen, setSpeechIssueSeen] = useState(false);
   const [copyState, setCopyState] = useState<"idle" | "ok" | "error">("idle");
-
-  useEffect(() => {
-    setInfo(getBrowserSupportInfo());
-  }, []);
 
   useEffect(() => {
     const onSpeechIssue = () => setSpeechIssueSeen(true);

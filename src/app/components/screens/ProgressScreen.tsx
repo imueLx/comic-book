@@ -16,11 +16,12 @@ export default function ProgressScreen({
   profile,
   onBack,
 }: ProgressScreenProps) {
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline, setIsOnline] = useState(
+    typeof window === "undefined" ? true : window.navigator.onLine,
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    setIsOnline(window.navigator.onLine);
 
     const markOnline = () => setIsOnline(true);
     const markOffline = () => setIsOnline(false);

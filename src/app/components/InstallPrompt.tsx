@@ -44,14 +44,12 @@ export default function InstallPrompt({
 }: {
   variant?: "banner" | "card" | "hero" | "mini";
 }) {
-  const [state, setState] = useState<InstallState>("hidden");
+  const [state, setState] = useState<InstallState>(() => detectState());
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    setState(detectState());
-
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);

@@ -6,7 +6,7 @@ import { ComicPage } from "../../data/comicPages";
 import ComicIllustration from "../ComicIllustration";
 import WordVisualIcon from "../WordVisualIcon";
 import { narrateDialog, speakWord } from "../../lib/audio";
-import { getWordIconKey } from "../../lib/wordVisuals";
+import { getWordIconKey } from "@/app/lib/wordVisuals";
 
 interface StoryComicPageProps {
   page: ComicPage;
@@ -106,7 +106,7 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
         .filter(Boolean);
     }
     return [];
-  }, [dialog, page.boardWords, page.quizOptions]);
+  }, [page.boardWords, page.quizOptions]);
 
   const hasVisualPractice = visualWords.length > 0;
   const displayWords = visualWords.slice(0, 6);
