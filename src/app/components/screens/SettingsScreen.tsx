@@ -55,14 +55,16 @@ export default function SettingsScreen({
       <header className="app-header py-3 px-4 sticky top-0 z-10 safe-top">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <motion.button
-            whileTap={{ scale: 0.9 }}
+            whileTap={{ scale: 0.93 }}
             onClick={onBack}
-            className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-sm cursor-pointer"
+            aria-label="Go back"
+            className="kid-back-btn"
           >
-            ←
+            <span className="kid-back-icon">←</span>
+            <span className="text-xs">Back</span>
           </motion.button>
           <h2 className="text-base font-extrabold text-gray-900">Settings</h2>
-          <div className="w-9" />
+          <div className="w-20" />
         </div>
       </header>
 

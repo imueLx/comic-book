@@ -33,7 +33,6 @@ import ComicBookApp from "./ComicBookApp";
 import ActivityScreen from "./components/screens/ActivityScreen";
 import ProgressScreen from "./components/screens/ProgressScreen";
 import SettingsScreen from "./components/screens/SettingsScreen";
-import BrowserCompatibilityPrompt from "./components/BrowserCompatibilityPrompt";
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>("splash");
@@ -134,11 +133,11 @@ export default function App() {
     const lesson = lessons.find((l) => l.id === lessonId);
     if (!lesson) return;
     setActiveLesson(lesson);
-    // If lesson has comic pages, show comic first; otherwise go straight to activities
-    if (lesson.comicPages.length > 0) {
-      setScreen("comicReader");
-    } else if (lesson.activities.length > 0) {
+    // Lessons are quiz-first; comic stays as separate learning mode.
+    if (lesson.activities.length > 0) {
       setScreen("activity");
+    } else if (lesson.comicPages.length > 0) {
+      setScreen("comicReader");
     }
   }, []);
 
@@ -235,9 +234,6 @@ export default function App() {
 
   return (
     <div data-theme={settings.theme} className={textSizeClass}>
-      <div className="px-4 pt-3">
-        <BrowserCompatibilityPrompt />
-      </div>
       <AnimatePresence mode="wait">
         <motion.div
           key={screen}
@@ -293,6 +289,7 @@ export default function App() {
           {screen === "progress" && profile && (
             <ProgressScreen
               profile={profile}
+              onStartLesson={handleStartLesson}
               onBack={() => setScreen("home")}
             />
           )}

@@ -10,14 +10,19 @@ import TomMascot from "../TomMascot";
 interface ProgressScreenProps {
   profile: LearnerProfile;
   onBack: () => void;
+  onStartLesson: (lessonId: number) => void;
 }
 
 export default function ProgressScreen({
   profile,
   onBack,
+  onStartLesson,
 }: ProgressScreenProps) {
   const [isOnline, setIsOnline] = useState(
     typeof window === "undefined" ? true : window.navigator.onLine,
+  );
+  const [lessonFilter, setLessonFilter] = useState<"all" | "todo" | "done">(
+    "all",
   );
 
   useEffect(() => {
@@ -47,11 +52,6 @@ export default function ProgressScreen({
 
   const lessonRows = lessons.map((lesson) => {
     const progress = profile.progress[lesson.id];
-    const isUnlocked =
-      !lesson.unlockAfter ||
-      lesson.unlockAfter < profile.currentLesson ||
-      Boolean(profile.progress[lesson.unlockAfter]?.completed);
-
     const isCompleted = Boolean(progress?.completed);
     const hasStarted = Boolean(
       progress &&
@@ -59,18 +59,44 @@ export default function ProgressScreen({
         (progress.activitiesCompleted?.length || 0) > 0),
     );
 
-    let status: "done" | "keep-going" | "start-next" | "locked" = "start-next";
-    if (!isUnlocked) status = "locked";
-    else if (isCompleted) status = "done";
+    let status: "done" | "keep-going" | "start-next" = "start-next";
+    if (isCompleted) status = "done";
     else if (hasStarted) status = "keep-going";
+
+    const quizCount = lesson.activities.length;
+    const comicCount = lesson.comicPages.length;
+    const quizzesDone = Math.min(
+      quizCount,
+      progress?.activitiesCompleted?.length || 0,
+    );
+    const comicsRead = Math.min(
+      comicCount,
+      progress?.comicPagesRead?.length || 0,
+    );
+
+    const totalSteps = Math.max(1, quizCount + comicCount);
+    const doneSteps = quizzesDone + comicsRead;
+    const stepPercent = Math.min(100, (doneSteps / totalSteps) * 100);
+
+    const modeLabel =
+      quizCount > 0 && comicCount > 0
+        ? "Mixed"
+        : quizCount > 0
+          ? "Quiz"
+          : "Story";
 
     return {
       lesson,
       progress,
-      isUnlocked,
       isCompleted,
       hasStarted,
       status,
+      quizCount,
+      comicCount,
+      quizzesDone,
+      comicsRead,
+      stepPercent,
+      modeLabel,
     };
   });
 
@@ -78,9 +104,13 @@ export default function ProgressScreen({
   const inProgressLessons = lessonRows.filter(
     (row) => row.status === "keep-going",
   ).length;
-  const lockedLessons = lessonRows.filter(
-    (row) => row.status === "locked",
-  ).length;
+  const readyLessons = totalLessons - completedLessons - inProgressLessons;
+  const visibleLessonRows =
+    lessonFilter === "all"
+      ? lessonRows
+      : lessonFilter === "todo"
+        ? lessonRows.filter((row) => row.status !== "done")
+        : lessonRows.filter((row) => row.status === "done");
   const overallProgressPercent =
     totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
@@ -306,8 +336,61 @@ export default function ProgressScreen({
               ▶ Keep going {inProgressLessons}
             </span>
             <span className="px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 text-[11px] font-bold whitespace-nowrap">
-              🔒 Locked {lockedLessons}
+              📘 Ready {readyLessons}
             </span>
+          </div>
+
+          <div className="mb-3 rounded-2xl border border-cyan-100 bg-cyan-50 p-2.5">
+            <p className="text-[11px] font-extrabold text-cyan-800 mb-1.5">
+              Lesson types
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              <span className="rounded-full bg-white px-2 py-1 text-[10px] font-bold text-gray-700">
+                📖 Story
+              </span>
+              <span className="rounded-full bg-white px-2 py-1 text-[10px] font-bold text-gray-700">
+                🧩 Quiz
+              </span>
+              <span className="rounded-full bg-white px-2 py-1 text-[10px] font-bold text-gray-700">
+                📖 + 🧩 Mixed
+              </span>
+            </div>
+          </div>
+
+          <div className="mb-3 grid grid-cols-3 gap-2">
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={() => setLessonFilter("all")}
+              className={`min-h-11 rounded-2xl text-[11px] font-extrabold transition-all px-1 whitespace-nowrap flex items-center justify-center ${
+                lessonFilter === "all"
+                  ? "bg-linear-to-b from-violet-500 to-purple-600 text-white shadow-md"
+                  : "bg-white text-gray-600 border-2 border-gray-200"
+              }`}
+            >
+              📚 All ({lessonRows.length})
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={() => setLessonFilter("todo")}
+              className={`min-h-11 rounded-2xl text-[11px] font-extrabold transition-all px-1 whitespace-nowrap flex items-center justify-center ${
+                lessonFilter === "todo"
+                  ? "bg-linear-to-b from-cyan-500 to-sky-600 text-white shadow-md"
+                  : "bg-white text-gray-600 border-2 border-gray-200"
+              }`}
+            >
+              ✏️ To Do {lessonRows.length - completedLessons}
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={() => setLessonFilter("done")}
+              className={`min-h-11 rounded-2xl text-[11px] font-extrabold transition-all px-1 whitespace-nowrap flex items-center justify-center ${
+                lessonFilter === "done"
+                  ? "bg-linear-to-b from-emerald-500 to-green-600 text-white shadow-md"
+                  : "bg-white text-gray-600 border-2 border-gray-200"
+              }`}
+            >
+              ✅ Done {completedLessons}
+            </motion.button>
           </div>
 
           {lessons.length === 0 ? (
@@ -319,33 +402,38 @@ export default function ProgressScreen({
             </div>
           ) : null}
 
+          {visibleLessonRows.length === 0 ? (
+            <div className="rounded-2xl bg-gray-50 p-3">
+              <p className="text-sm font-bold text-gray-700">
+                {lessonFilter === "done"
+                  ? "No completed lessons yet."
+                  : "No lessons to show here."}
+              </p>
+            </div>
+          ) : null}
+
           <div className="space-y-2.5">
-            {lessonRows.map((row) => {
+            {visibleLessonRows.map((row) => {
               const stars = row.progress?.stars || 0;
-              const unlockHint = row.lesson.unlockAfter
-                ? `Finish lesson ${row.lesson.unlockAfter} to unlock`
-                : null;
 
               const statusText =
                 row.status === "done"
                   ? "Done"
                   : row.status === "keep-going"
                     ? "Keep going"
-                    : row.status === "locked"
-                      ? "Locked"
-                      : "Start next";
+                    : "Start next";
 
               return (
-                <div
+                <motion.button
+                  whileTap={{ scale: 0.985 }}
+                  onClick={() => onStartLesson(row.lesson.id)}
                   key={row.lesson.id}
-                  className={`flex items-center gap-3 rounded-2xl p-3 border ${
+                  className={`w-full text-left flex items-start gap-3 rounded-2xl p-3 border ${
                     row.status === "done"
                       ? "bg-emerald-50 border-emerald-100"
                       : row.status === "keep-going"
                         ? "bg-cyan-50 border-cyan-100"
-                        : row.status === "locked"
-                          ? "bg-gray-50 border-gray-100 opacity-80"
-                          : "bg-white border-gray-100"
+                        : "bg-white border-gray-100"
                   }`}
                 >
                   <div
@@ -354,23 +442,24 @@ export default function ProgressScreen({
                         ? "bg-emerald-100"
                         : row.status === "keep-going"
                           ? "bg-cyan-100"
-                          : row.status === "locked"
-                            ? "bg-gray-200"
-                            : "bg-amber-100"
+                          : "bg-amber-100"
                     }`}
                   >
-                    {row.status === "locked" ? "🔒" : row.lesson.icon}
+                    {row.lesson.icon}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-gray-900 truncate">
                       {row.lesson.title}
                     </p>
+                    <p className="text-[11px] text-cyan-700 mt-0.5 font-extrabold">
+                      {row.modeLabel === "Mixed"
+                        ? "📖 + 🧩 Mixed"
+                        : row.modeLabel === "Quiz"
+                          ? "🧩 Quiz"
+                          : "📖 Story"}
+                    </p>
                     {row.status === "done" ? (
                       <StarRating stars={stars} size="sm" />
-                    ) : row.status === "locked" ? (
-                      <p className="text-xs text-gray-500 font-medium truncate">
-                        {unlockHint || "Locked"}
-                      </p>
                     ) : (
                       <p className="text-xs text-gray-500 font-medium">
                         {row.status === "keep-going"
@@ -378,21 +467,36 @@ export default function ProgressScreen({
                           : row.lesson.subtitle}
                       </p>
                     )}
+
+                    <div className="mt-1.5">
+                      <div className="flex items-center justify-between text-[10px] font-bold text-gray-500 mb-1">
+                        <span>
+                          Story {row.comicsRead}/{row.comicCount}
+                        </span>
+                        <span>
+                          Quiz {row.quizzesDone}/{row.quizCount}
+                        </span>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-linear-to-r from-cyan-400 to-emerald-500"
+                          style={{ width: `${row.stepPercent}%` }}
+                        />
+                      </div>
+                    </div>
                   </div>
                   <span
-                    className={`text-[11px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap ${
+                    className={`text-[11px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap text-center min-w-22 self-start mt-0.5 ${
                       row.status === "done"
                         ? "bg-emerald-100 text-emerald-700"
                         : row.status === "keep-going"
                           ? "bg-cyan-100 text-cyan-700"
-                          : row.status === "locked"
-                            ? "bg-gray-200 text-gray-600"
-                            : "bg-amber-100 text-amber-700"
+                          : "bg-amber-100 text-amber-700"
                     }`}
                   >
                     {statusText}
                   </span>
-                </div>
+                </motion.button>
               );
             })}
           </div>

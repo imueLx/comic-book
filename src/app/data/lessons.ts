@@ -20,7 +20,6 @@ export const lessons: Lesson[] = [
     icon: "🐱",
     comicPages: [4, 5],
     activities: ["at-tap-1", "at-tap-2", "at-sentence-1", "at-listen-1"],
-    unlockAfter: 1,
   },
   {
     id: 3,
@@ -29,7 +28,6 @@ export const lessons: Lesson[] = [
     icon: "🌀",
     comicPages: [6, 7],
     activities: ["an-tap-1", "an-tap-2", "an-sentence-1", "an-sort-1"],
-    unlockAfter: 2,
   },
   {
     id: 4,
@@ -38,7 +36,6 @@ export const lessons: Lesson[] = [
     icon: "🔤",
     comicPages: [8],
     activities: ["sv-tap-1", "sv-listen-1", "sv-sentence-1"],
-    unlockAfter: 3,
   },
   {
     id: 5,
@@ -47,7 +44,6 @@ export const lessons: Lesson[] = [
     icon: "🔗",
     comicPages: [9],
     activities: ["bl-tap-1", "bl-match-1", "bl-listen-1"],
-    unlockAfter: 4,
   },
   {
     id: 6,
@@ -56,7 +52,6 @@ export const lessons: Lesson[] = [
     icon: "🧩",
     comicPages: [10, 11, 12],
     activities: ["cc-sentence-1", "cc-sentence-2", "cc-tap-1"],
-    unlockAfter: 5,
   },
   {
     id: 7,
@@ -65,7 +60,6 @@ export const lessons: Lesson[] = [
     icon: "📘",
     comicPages: [13, 14],
     activities: ["rfc-spelling-1", "rfc-rhyme-1", "rfc-meaning-1"],
-    unlockAfter: 6,
   },
 ];
 

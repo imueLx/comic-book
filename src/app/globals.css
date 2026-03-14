@@ -24,6 +24,7 @@
 
 /* ===== BASE ===== */
 body {
+  margin: 0;
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-nunito), "Segoe UI", sans-serif;
@@ -31,6 +32,10 @@ body {
   letter-spacing: 0.01em;
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
+}
+
+html {
+  background: var(--color-background);
 }
 
 #__next {
@@ -747,6 +752,26 @@ h4,
   box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.05);
 }
 
+.bottom-nav-inner {
+  border: 1px solid rgba(124, 58, 237, 0.16);
+  border-radius: 18px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.bottom-nav-tab {
+  color: #6b7280;
+  transition:
+    transform 0.14s ease,
+    color 0.14s ease,
+    background-color 0.14s ease;
+}
+
+.bottom-nav-tab-active {
+  color: #6d28d9;
+  background: rgba(124, 58, 237, 0.12);
+}
+
 /* ===== SAFE AREAS ===== */
 .safe-top {
   padding-top: env(safe-area-inset-top);
@@ -820,6 +845,32 @@ h4,
   background: rgba(26, 22, 37, 0.92);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .kid-back-btn {
+  border-color: #4a4064;
+  background: linear-gradient(180deg, #2b2540 0%, #241f36 100%);
+  color: #ddd7ea;
+}
+
+[data-theme="dark"] .kid-back-icon {
+  background: #332c4a;
+  border-color: #5a4d79;
+  color: #c9c2dd;
+}
+
+[data-theme="dark"] .bottom-nav-inner {
+  border-color: rgba(167, 139, 250, 0.22);
+  background: rgba(37, 32, 55, 0.86);
+}
+
+[data-theme="dark"] .bottom-nav-tab {
+  color: #9a93af;
+}
+
+[data-theme="dark"] .bottom-nav-tab-active {
+  color: #d7cbff;
+  background: rgba(139, 92, 246, 0.26);
 }
 
 [data-theme="dark"] .comic-panel {

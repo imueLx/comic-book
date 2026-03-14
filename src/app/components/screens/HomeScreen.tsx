@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { LearnerProfile } from "../../lib/types";
 import { lessons } from "../../data/lessons";
@@ -23,6 +23,8 @@ export default function HomeScreen({
   onViewProgress,
   onViewSettings,
 }: HomeScreenProps) {
+  const lessonsSectionRef = useRef<HTMLDivElement | null>(null);
+  const [lessonView, setLessonView] = useState<"all" | "todo" | "done">("all");
   const [isOnline, setIsOnline] = useState(
     typeof window === "undefined" ? true : window.navigator.onLine,
   );
@@ -43,7 +45,13 @@ export default function HomeScreen({
   }, []);
 
   const currentLesson =
-    lessons.find((l) => l.id === profile.currentLesson) || lessons[0];
+    lessons.find(
+      (l) => !profile.progress[l.id]?.completed && l.activities.length > 0,
+    ) ||
+    lessons.find((l) => l.id === profile.currentLesson) ||
+    lessons.find((l) => !profile.progress[l.id]?.completed) ||
+    lessons[lessons.length - 1] ||
+    lessons[0];
   const currentLessonProgress = profile.progress[currentLesson.id];
   const completedCount = profile.lessonsCompleted;
   const totalLessons = lessons.length;
@@ -51,29 +59,44 @@ export default function HomeScreen({
   const progressPercent =
     totalLessons > 0 ? (completedCount / totalLessons) * 100 : 0;
 
-  const hasCurrentLessonProgress = Boolean(
-    currentLessonProgress &&
-    (currentLessonProgress.comicPagesRead.length > 0 ||
-      currentLessonProgress.activitiesCompleted.length > 0),
-  );
   const shouldResumeCurrentLesson = Boolean(
     currentLessonProgress && !currentLessonProgress.completed,
   );
 
-  const previewLessons = lessons
-    .filter((lesson) => {
-      if (!lesson.unlockAfter) return true;
-      return (
-        lesson.unlockAfter < profile.currentLesson ||
-        Boolean(profile.progress[lesson.unlockAfter]?.completed)
-      );
-    })
-    .slice(0, 3);
+  const previewLessons = lessons;
+  const todoLessons = previewLessons.filter(
+    (lesson) => !profile.progress[lesson.id]?.completed,
+  );
+  const doneLessons = previewLessons.filter(
+    (lesson) => profile.progress[lesson.id]?.completed,
+  );
+  const visibleLessons =
+    lessonView === "all"
+      ? previewLessons
+      : lessonView === "todo"
+        ? todoLessons
+        : doneLessons;
+
+  const currentLessonHasQuiz = currentLesson.activities.length > 0;
+  const currentLessonHasStory = currentLesson.comicPages.length > 0;
+  const currentLessonMode =
+    currentLessonHasQuiz && currentLessonHasStory
+      ? "Learning + Quiz"
+      : currentLessonHasQuiz
+        ? "Lesson Quiz"
+        : "Learning Story";
 
   const heroEncouragement =
     profile.streak > 0
       ? `You are on a ${profile.streak}-day reading streak!`
-      : "Read one story today and earn a star!";
+      : "Pick Comic or Lessons and start reading today!";
+
+  const scrollToLessons = () => {
+    lessonsSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   return (
     <div className="app-shell min-h-dvh flex flex-col">
@@ -154,16 +177,6 @@ export default function HomeScreen({
             >
               Read the Comic
             </motion.button>
-
-            {hasCurrentLessonProgress && (
-              <motion.button
-                whileTap={{ scale: 0.98 }}
-                onClick={() => onStartLesson(currentLesson.id)}
-                className="mt-2.5 w-full py-2.5 rounded-xl bg-white/15 border border-white/25 text-white font-bold text-sm min-h-11 cursor-pointer"
-              >
-                Resume Lesson {currentLesson.id}
-              </motion.button>
-            )}
           </div>
         </motion.div>
 
@@ -176,7 +189,7 @@ export default function HomeScreen({
             <div className="mb-2.5">
               <div>
                 <p className="text-cyan-100 text-xs font-bold uppercase tracking-wider mb-1">
-                  Continue Learning
+                  {currentLessonMode}
                 </p>
                 <h3 className="text-xl sm:text-2xl font-extrabold text-white leading-tight">
                   {currentLesson.icon} {currentLesson.title}
@@ -185,7 +198,9 @@ export default function HomeScreen({
             </div>
 
             <p className="text-sm text-cyan-100 mb-4">
-              {currentLesson.subtitle}
+              {currentLessonHasQuiz
+                ? "Quick practice questions to check understanding."
+                : "Read the lesson story and practice new words."}
             </p>
 
             <div className="flex items-center gap-3">
@@ -207,9 +222,11 @@ export default function HomeScreen({
               onClick={() => onStartLesson(currentLesson.id)}
               className="mt-4 w-full py-3 rounded-2xl bg-white font-extrabold text-cyan-700 text-base min-h-12 cursor-pointer shadow-lg"
             >
-              {shouldResumeCurrentLesson
-                ? "Resume Lesson"
-                : "Start Next Lesson"}
+              {currentLessonHasQuiz
+                ? shouldResumeCurrentLesson
+                  ? "Continue Quiz"
+                  : "Start Quiz"
+                : "Read Lesson"}
             </motion.button>
           </div>
         </motion.div>
@@ -219,7 +236,7 @@ export default function HomeScreen({
             !isOnline
               ? "No internet? No problem. Let's keep reading!"
               : completedCount === 0
-                ? 'Tap "Read the Comic" to begin your adventure!'
+                ? "Tap Comic or Lessons to begin your adventure!"
                 : completedCount >= totalLessons
                   ? "You finished all lessons. Amazing reading!"
                   : "You're doing great. One more story today!"
@@ -273,33 +290,104 @@ export default function HomeScreen({
           </div>
         </div>
 
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-extrabold text-gray-900 text-base">
-            Next for You
-          </h3>
+        <div
+          ref={lessonsSectionRef}
+          className="flex items-center justify-between mb-3 scroll-mt-24"
+        >
+          <h3 className="font-extrabold text-gray-900 text-base">Lessons</h3>
           <button
             onClick={onViewProgress}
             className="text-xs text-gray-500 font-bold cursor-pointer"
           >
-            See all
+            Track progress
           </button>
         </div>
 
-        {previewLessons.length === 0 ? (
+        <div className="mb-3 rounded-2xl border border-cyan-100 bg-cyan-50 p-2.5">
+          <p className="text-[11px] font-extrabold text-cyan-800 mb-1.5">
+            Lesson types
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            <span className="rounded-full bg-white px-2 py-1 text-[10px] font-bold text-gray-700">
+              📖 Learning Story
+            </span>
+            <span className="rounded-full bg-white px-2 py-1 text-[10px] font-bold text-gray-700">
+              🧩 Quiz
+            </span>
+            <span className="rounded-full bg-white px-2 py-1 text-[10px] font-bold text-gray-700">
+              📖 + 🧩 Mixed
+            </span>
+          </div>
+        </div>
+
+        <div className="mb-3 grid grid-cols-3 gap-2">
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setLessonView("all")}
+            className={`min-h-11 rounded-2xl text-[11px] font-extrabold transition-all px-1 whitespace-nowrap flex items-center justify-center ${
+              lessonView === "all"
+                ? "bg-linear-to-b from-violet-500 to-purple-600 text-white shadow-md"
+                : "bg-white text-gray-600 border-2 border-gray-200"
+            }`}
+          >
+            📚 All ({previewLessons.length})
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setLessonView("todo")}
+            className={`min-h-11 rounded-2xl text-[11px] font-extrabold transition-all px-1 whitespace-nowrap flex items-center justify-center ${
+              lessonView === "todo"
+                ? "bg-linear-to-b from-cyan-500 to-sky-600 text-white shadow-md"
+                : "bg-white text-gray-600 border-2 border-gray-200"
+            }`}
+          >
+            ✏️ To Do ({todoLessons.length})
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setLessonView("done")}
+            className={`min-h-11 rounded-2xl text-[11px] font-extrabold transition-all px-1 whitespace-nowrap flex items-center justify-center ${
+              lessonView === "done"
+                ? "bg-linear-to-b from-emerald-500 to-green-600 text-white shadow-md"
+                : "bg-white text-gray-600 border-2 border-gray-200"
+            }`}
+          >
+            ✅ Completed ({doneLessons.length})
+          </motion.button>
+        </div>
+
+        {visibleLessons.length === 0 ? (
           <div className="app-card rounded-2xl p-4 mb-5">
-            <p className="text-sm font-bold text-gray-800">No lessons yet.</p>
-            <p className="text-xs text-gray-500 mt-1">
-              Check again in a moment.
+            <p className="text-sm font-bold text-gray-800">
+              {lessonView === "todo"
+                ? "All quiz lessons are done. Great job!"
+                : lessonView === "done"
+                  ? "No completed lessons yet. Start one now!"
+                  : "No lessons yet."}
             </p>
           </div>
         ) : (
           <div className="space-y-2.5 mb-5">
-            {previewLessons.map((lesson, idx) => {
+            {visibleLessons.map((lesson, idx) => {
               const lessonProgress = profile.progress[lesson.id];
               const isCompleted = Boolean(lessonProgress?.completed);
               const isInProgress = Boolean(
                 lessonProgress && !lessonProgress.completed,
               );
+              const quizCount = lesson.activities.length;
+              const hasStory = lesson.comicPages.length > 0;
+              const modeText =
+                quizCount > 0 && hasStory
+                  ? `Learning + Quiz • ${quizCount} question${quizCount > 1 ? "s" : ""}`
+                  : quizCount > 0
+                    ? `Quiz • ${quizCount} question${quizCount > 1 ? "s" : ""}`
+                    : "Learning Story";
+              const modeBadge =
+                quizCount > 0 && hasStory
+                  ? "📖 + 🧩 Mixed"
+                  : quizCount > 0
+                    ? "🧩 Quiz"
+                    : "📖 Story";
 
               return (
                 <motion.button
@@ -326,12 +414,22 @@ export default function HomeScreen({
                     <p className="font-bold text-gray-900 text-sm leading-tight truncate">
                       {lesson.title}
                     </p>
-                    <p className="text-xs text-gray-500 truncate mt-0.5">
-                      {lesson.subtitle}
+                    <p className="text-[11px] text-cyan-700 mt-0.5 font-extrabold">
+                      {modeBadge}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">{modeText}</p>
+                    <p className="text-[11px] text-gray-500 mt-1 font-semibold">
+                      {quizCount === 0
+                        ? "Tap to read the lesson story"
+                        : isCompleted
+                          ? "Tap to replay for practice"
+                          : isInProgress
+                            ? "Continue where you stopped"
+                            : "Tap to start this quiz"}
                     </p>
                   </div>
                   <span
-                    className={`text-xs font-bold px-2 py-1 rounded-full ${
+                    className={`text-xs font-bold px-2 py-1 rounded-full shrink-0 min-w-24 text-center ${
                       isCompleted
                         ? "bg-emerald-50 text-emerald-700"
                         : isInProgress
@@ -339,7 +437,17 @@ export default function HomeScreen({
                           : "bg-orange-50 text-orange-700"
                     }`}
                   >
-                    {isCompleted ? "Review" : isInProgress ? "Resume" : "Start"}
+                    {isCompleted
+                      ? quizCount > 0
+                        ? "Quiz Done"
+                        : "Read"
+                      : isInProgress
+                        ? quizCount > 0
+                          ? "Continue Quiz"
+                          : "Continue"
+                        : quizCount > 0
+                          ? "Take Quiz"
+                          : "Read"}
                   </span>
                 </motion.button>
               );
@@ -362,40 +470,33 @@ export default function HomeScreen({
       </div>
 
       <nav className="bottom-nav fixed bottom-0 left-0 right-0 px-4 py-2.5 safe-bottom z-20">
-        <div className="max-w-lg mx-auto flex items-center justify-around">
-          {[
-            { icon: "🏠", label: "Home", active: true, action: () => {} },
-            {
-              icon: "📊",
-              label: "Progress",
-              active: false,
-              action: onViewProgress,
-            },
-            {
-              icon: "📖",
-              label: "Comic",
-              active: false,
-              action: onReadComic,
-            },
-          ].map((tab) => (
-            <motion.button
-              key={tab.label}
-              whileTap={{ scale: 0.9 }}
-              onClick={tab.action}
-              className={`flex flex-col items-center gap-0.5 py-2 px-4 rounded-xl min-w-16 min-h-13 cursor-pointer ${
-                tab.active ? "text-violet-600" : "text-gray-400"
-              }`}
-            >
-              <span className={`text-2xl ${tab.active ? "scale-110" : ""}`}>
-                {tab.icon}
-              </span>
-              <span
-                className={`text-[11px] font-bold ${tab.active ? "text-violet-600" : "text-gray-400"}`}
-              >
-                {tab.label}
-              </span>
-            </motion.button>
-          ))}
+        <div className="bottom-nav-inner max-w-lg mx-auto flex items-center justify-around">
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollToLessons}
+            className="bottom-nav-tab flex flex-col items-center gap-0.5 py-2 px-4 rounded-xl min-w-16 min-h-13 cursor-pointer"
+          >
+            <span className="text-2xl">📚</span>
+            <span className="text-[11px] font-bold">Lessons</span>
+          </motion.button>
+
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={onReadComic}
+            className="bottom-nav-tab bottom-nav-tab-active flex flex-col items-center gap-0.5 py-2 px-5 rounded-xl min-w-16 min-h-13 cursor-pointer bg-linear-to-b from-violet-500 to-purple-600 text-white shadow-md shadow-violet-300"
+          >
+            <span className="text-2xl scale-110 drop-shadow-sm">📖</span>
+            <span className="text-[11px] font-bold">Comic</span>
+          </motion.button>
+
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={onViewProgress}
+            className="bottom-nav-tab flex flex-col items-center gap-0.5 py-2 px-4 rounded-xl min-w-16 min-h-13 cursor-pointer"
+          >
+            <span className="text-2xl">📊</span>
+            <span className="text-[11px] font-bold">Progress</span>
+          </motion.button>
         </div>
       </nav>
     </div>
