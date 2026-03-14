@@ -86,6 +86,13 @@ function pickVoice(synth: SpeechSynthesis): SpeechSynthesisVoice | null {
   return getPreferredVoice(voices);
 }
 
+function hasLocalEnglishVoice(synth: SpeechSynthesis): boolean {
+  const voices = synth.getVoices();
+  return voices.some(
+    (v) => v.localService && v.lang.toLowerCase().startsWith("en"),
+  );
+}
+
 function waitForVoices(synth: SpeechSynthesis, timeoutMs = 800): Promise<void> {
   return new Promise((resolve) => {
     if (synth.getVoices().length > 0) {
@@ -154,6 +161,18 @@ export function speak(text: string, rate = 0.88, pitch = 1.18): Promise<void> {
         utterance.lang = preferred.lang || "en-US";
       }
 
+      // Some devices rely on online voices. If offline and no local voice,
+      // exit gracefully instead of hanging UI state.
+      const offlineWithoutLocalVoice =
+        typeof navigator !== "undefined" &&
+        navigator.onLine === false &&
+        !hasLocalEnglishVoice(synth);
+      if (offlineWithoutLocalVoice) {
+        reportSpeechIssue("offline-no-local-voice");
+        resolve();
+        return;
+      }
+
       const selectedName = utterance.voice?.name.toLowerCase() ?? "";
       const isNaturalLike =
         selectedName.includes("natural") ||
@@ -166,7 +185,20 @@ export function speak(text: string, rate = 0.88, pitch = 1.18): Promise<void> {
         utterance.pitch = Math.max(0.98, Math.min(1.08, utterance.pitch));
       }
 
-      utterance.onend = () => resolve();
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        clearTimeout(safetyTimer);
+        resolve();
+      };
+
+      const safetyTimer = setTimeout(() => {
+        reportSpeechIssue("speech-timeout");
+        finish();
+      }, 8000);
+
+      utterance.onend = () => finish();
       utterance.onerror = (e) => {
         // Most TTS errors should be non-fatal for app flow.
         if (
@@ -177,13 +209,18 @@ export function speak(text: string, rate = 0.88, pitch = 1.18): Promise<void> {
           e.error === "audio-hardware"
         ) {
           reportSpeechIssue(e.error || "speech-error");
-          resolve();
+          finish();
         } else {
           reportSpeechIssue(e.error || "speech-error");
-          resolve();
+          finish();
         }
       };
-      synth.speak(utterance);
+      try {
+        synth.speak(utterance);
+      } catch {
+        reportSpeechIssue("speech-exception");
+        finish();
+      }
     })();
   });
 }

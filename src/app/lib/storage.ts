@@ -102,6 +102,15 @@ export function updateProfile(profile: LearnerProfile) {
   }
 }
 
+export function updateProfileName(profileId: string, name: string) {
+  const profile = getProfile(profileId);
+  if (!profile) return;
+  const trimmed = name.trim();
+  if (!trimmed) return;
+  profile.name = trimmed;
+  updateProfile(profile);
+}
+
 export function deleteProfile(id: string) {
   const profiles = getAllProfiles().filter((p) => p.id !== id);
   saveAllProfiles(profiles);

@@ -2,29 +2,51 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { AppSettings } from "../../lib/types";
+import { AppSettings, LearnerProfile } from "../../lib/types";
 import InstallPrompt from "../InstallPrompt";
 
 interface SettingsScreenProps {
+  profile: LearnerProfile | null;
   settings: AppSettings;
   onSave: (settings: AppSettings) => void;
+  onSaveName: (name: string) => void;
   onBack: () => void;
 }
 
 export default function SettingsScreen({
+  profile,
   settings,
   onSave,
+  onSaveName,
   onBack,
 }: SettingsScreenProps) {
   const [local, setLocal] = useState<AppSettings>({ ...settings });
+  const [name, setName] = useState(profile?.name ?? "");
+  const [isEditingName, setIsEditingName] = useState(false);
 
   const update = (partial: Partial<AppSettings>) => {
     setLocal((prev) => ({ ...prev, ...partial }));
   };
 
   const handleSave = () => {
+    if (name.trim()) {
+      onSaveName(name);
+    }
     onSave(local);
     onBack();
+  };
+
+  const handleNameAction = () => {
+    if (!isEditingName) {
+      setIsEditingName(true);
+      return;
+    }
+
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    onSaveName(trimmed);
+    setName(trimmed);
+    setIsEditingName(false);
   };
 
   return (
@@ -45,6 +67,45 @@ export default function SettingsScreen({
       </header>
 
       <div className="flex-1 px-4 py-4 max-w-lg mx-auto w-full space-y-4 pb-8">
+        {/* Profile */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="app-card p-5"
+        >
+          <h3 className="font-extrabold text-gray-900 mb-3 flex items-center gap-2">
+            👤 Profile
+          </h3>
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <label className="block text-sm font-bold text-gray-700">
+              Display Name
+            </label>
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={handleNameAction}
+              className={`rounded-lg px-3 py-1.5 text-xs font-bold min-h-8 cursor-pointer ${
+                isEditingName
+                  ? "bg-emerald-500 text-white"
+                  : "bg-violet-100 text-violet-700"
+              }`}
+            >
+              {isEditingName ? "Save Name" : "Edit Name"}
+            </motion.button>
+          </div>
+          <input
+            type="text"
+            value={name}
+            maxLength={32}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your name"
+            disabled={!isEditingName}
+            className="w-full rounded-xl border-2 border-violet-200 bg-white px-3 py-2.5 text-sm font-bold text-gray-800 outline-none focus:border-violet-400 disabled:bg-gray-100 disabled:text-gray-500"
+          />
+          <p className="mt-2 text-xs text-gray-500">
+            Tap Edit Name to change your name, then tap Save Name.
+          </p>
+        </motion.div>
+
         {/* Audio */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -140,7 +201,21 @@ export default function SettingsScreen({
         </motion.div>
 
         {/* Install App */}
-        <InstallPrompt variant="card" />
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="app-card p-5"
+        >
+          <h3 className="font-extrabold text-gray-900 mb-3 flex items-center gap-2">
+            📲 Install and Offline Use
+          </h3>
+          <p className="text-xs text-gray-600 mb-3">
+            Install the app so kids can keep reading comics and doing lessons
+            even without internet.
+          </p>
+          <InstallPrompt variant="card" persistent />
+        </motion.div>
 
         {/* Save */}
         <motion.button

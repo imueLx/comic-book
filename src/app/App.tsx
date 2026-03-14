@@ -18,6 +18,7 @@ import {
   completeLesson,
   awardBadge,
   updateSettings,
+  updateProfileName,
 } from "./lib/storage";
 import { lessons, badges } from "./data/lessons";
 import { getActivitiesForLesson } from "./data/activities";
@@ -204,6 +205,15 @@ export default function App() {
     [profile, refreshProfile],
   );
 
+  const handleSaveProfileName = useCallback(
+    (name: string) => {
+      if (!profile) return;
+      updateProfileName(profile.id, name);
+      refreshProfile();
+    },
+    [profile, refreshProfile],
+  );
+
   if (!mounted) {
     return <div className="min-h-dvh app-shell" />;
   }
@@ -289,8 +299,10 @@ export default function App() {
 
           {screen === "settings" && (
             <SettingsScreen
+              profile={profile}
               settings={settings}
               onSave={handleSaveSettings}
+              onSaveName={handleSaveProfileName}
               onBack={() => setScreen("home")}
             />
           )}
