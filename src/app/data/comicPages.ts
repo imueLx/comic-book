@@ -278,7 +278,6 @@ export const comicPages: ComicPage[] = [
     title: "The End",
     background: "bg-linear-to-b from-sun to-pink",
     scene: "celebration",
-    isEnd: true,
     dialog: [
       {
         character: "narrator",
@@ -421,5 +420,22 @@ export const comicPages: ComicPage[] = [
     ],
     boardWords: ["big", "large", "happy", "sad", "dog", "run"],
     boardLabel: "Word Meanings",
+  },
+  {
+    pageNumber: 15,
+    title: "The End",
+    background: "bg-linear-to-b from-sun to-pink",
+    scene: "celebration",
+    isEnd: true,
+    dialog: [
+      {
+        character: "narrator",
+        text: "Ana and Ben became better readers because they learned word patterns.",
+      },
+      {
+        character: "students",
+        text: "Hooray for reading!",
+      },
+    ],
   },
 ];

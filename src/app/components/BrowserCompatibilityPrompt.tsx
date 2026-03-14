@@ -24,6 +24,24 @@ export default function BrowserCompatibilityPrompt() {
   const [copyState, setCopyState] = useState<"idle" | "ok" | "error">("idle");
 
   useEffect(() => {
+    if (!info || typeof window === "undefined") return;
+    if (!info.isInAppBrowser || info.os !== "android") return;
+
+    const triedKey = "wpa-tried-external-open";
+    if (sessionStorage.getItem(triedKey) === "1") return;
+
+    const redirectUrl = buildRedirectUrl(window.location.href, info.os);
+    if (!redirectUrl) return;
+
+    sessionStorage.setItem(triedKey, "1");
+    const timer = window.setTimeout(() => {
+      window.location.href = redirectUrl;
+    }, 350);
+
+    return () => window.clearTimeout(timer);
+  }, [info]);
+
+  useEffect(() => {
     const onSpeechIssue = () => setSpeechIssueSeen(true);
     window.addEventListener("app:speech-issue", onSpeechIssue);
     return () => window.removeEventListener("app:speech-issue", onSpeechIssue);
@@ -131,7 +149,9 @@ export default function BrowserCompatibilityPrompt() {
             onClick={handleOpenSupportedBrowser}
             className="min-h-10 rounded-xl bg-linear-to-b from-emerald-500 to-emerald-600 px-3 py-2 text-sm font-extrabold text-white"
           >
-            Open in {preferredBrowser}
+            {info?.isInAppBrowser && info.os === "android"
+              ? "Open in Chrome"
+              : `Open in ${preferredBrowser}`}
           </button>
           <button
             onClick={handleCopyLink}

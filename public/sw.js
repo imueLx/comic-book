@@ -1,10 +1,11 @@
-const CACHE_NAME = "word-pattern-adventure-v2";
-const STATIC_CACHE = "word-pattern-static-v2";
+const CACHE_NAME = "word-pattern-adventure-v3";
+const STATIC_CACHE = "word-pattern-static-v3";
 
 // Shell assets to pre-cache for instant offline start
 const PRECACHE_URLS = [
   "/",
   "/manifest.json",
+  "/favicon.ico",
   "/icon-192.png",
   "/icon-512.png",
   "/icon.svg",
@@ -70,6 +71,31 @@ self.addEventListener("fetch", (event) => {
             }),
         ),
       ),
+    );
+    return;
+  }
+
+  // Next data and media files needed by lessons/comics: stale-while-revalidate
+  if (
+    url.pathname.startsWith("/_next/data/") ||
+    ["image", "audio", "video", "script", "style", "font"].includes(
+      request.destination,
+    )
+  ) {
+    event.respondWith(
+      caches.match(request).then((cached) => {
+        const networkFetch = fetch(request)
+          .then((res) => {
+            if (res.ok) {
+              const clone = res.clone();
+              caches.open(STATIC_CACHE).then((c) => c.put(request, clone));
+            }
+            return res;
+          })
+          .catch(() => cached);
+
+        return cached || networkFetch;
+      }),
     );
     return;
   }

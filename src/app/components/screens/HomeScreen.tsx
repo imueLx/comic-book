@@ -94,8 +94,18 @@ export default function HomeScreen({
               </p>
             </div>
           </div>
-          <div className="px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold whitespace-nowrap">
-            🔥 Day {Math.max(1, profile.streak)}
+          <div className="flex items-center gap-2">
+            <div className="px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold whitespace-nowrap">
+              🔥 Day {Math.max(1, profile.streak)}
+            </div>
+            <motion.button
+              whileTap={{ scale: 0.93 }}
+              onClick={onViewSettings}
+              aria-label="Open settings"
+              className="h-9 w-9 rounded-full border-2 border-gray-300 bg-white text-gray-600 text-sm leading-none flex items-center justify-center shadow-sm"
+            >
+              ⚙️
+            </motion.button>
           </div>
         </div>
       </header>
@@ -337,8 +347,17 @@ export default function HomeScreen({
           </div>
         )}
 
-        <div className="mb-5">
-          <InstallPrompt variant="mini" />
+        <div className="mb-5 rounded-3xl border-2 border-violet-200 bg-linear-to-br from-violet-50 to-sky-50 p-4">
+          <p className="text-base font-extrabold text-violet-800">
+            📲 Install for Offline Reading
+          </p>
+          <p className="mt-1 text-xs font-semibold text-violet-700">
+            Add this app to your home screen so kids can read comics and do
+            lessons even without internet.
+          </p>
+          <div className="mt-3">
+            <InstallPrompt variant="card" persistent />
+          </div>
         </div>
       </div>
 
@@ -353,10 +372,10 @@ export default function HomeScreen({
               action: onViewProgress,
             },
             {
-              icon: "⚙️",
-              label: "Settings",
+              icon: "📖",
+              label: "Comic",
               active: false,
-              action: onViewSettings,
+              action: onReadComic,
             },
           ].map((tab) => (
             <motion.button

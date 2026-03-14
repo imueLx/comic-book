@@ -77,29 +77,47 @@ export default function EndPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
-        className="bg-emerald-50 rounded-2xl p-4 sm:p-5 max-w-md shadow-sm mx-2 border-2 border-emerald-200"
+        className="bg-emerald-50 rounded-2xl p-4 sm:p-5 max-w-xl shadow-sm mx-2 border-2 border-emerald-200"
       >
         <h3 className="font-extrabold text-emerald-700 text-base sm:text-lg mb-2 sm:mb-3">
-          🌟 What We Learned:
+          ⭐ What We Learned
         </h3>
-        <ul className="text-left text-emerald-600 space-y-1.5 sm:space-y-2 text-sm sm:text-base">
-          <li>
-            ✅ The <strong>–at</strong> word family: cat, bat, hat, mat
-          </li>
-          <li>
-            ✅ The <strong>–an</strong> word family: fan, man, pan, ran, van,
-            can
-          </li>
-          <li>
-            ✅ <strong>Short vowels</strong>: pig, pen, cup, bed
-          </li>
-          <li>
-            ✅ <strong>Blends</strong>: sh, br, fr
-          </li>
-          <li>
-            ✅ Using <strong>context clues</strong> to pick the right word
-          </li>
-        </ul>
+        <div className="text-left text-emerald-700 space-y-3 text-sm sm:text-base">
+          <div>
+            <p className="font-black">📖 Fluency</p>
+            <ul className="mt-1 space-y-1.5 text-emerald-600">
+              <li>✅ Reading words smoothly and clearly</li>
+              <li>
+                ✅ Recognizing word patterns like the -at family (cat, bat, hat,
+                mat)
+              </li>
+              <li>
+                ✅ Recognizing the -an family (fan, man, pan, ran, van, can)
+              </li>
+              <li>
+                ✅ Reading words with short vowel sounds (pig, pen, cup, bed)
+              </li>
+              <li>✅ Reading words with blends (sh, br, fr)</li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-black">🧠 Comprehension</p>
+            <ul className="mt-1 space-y-1.5 text-emerald-600">
+              <li>✅ Understanding the meaning of words</li>
+              <li>
+                ✅ Identifying synonyms (words with the same meaning) like big -
+                large
+              </li>
+              <li>
+                ✅ Identifying antonyms (words with opposite meaning) like happy
+                - sad
+              </li>
+              <li>
+                ✅ Using context clues to choose the correct word in a sentence
+              </li>
+            </ul>
+          </div>
+        </div>
       </motion.div>
 
       {/* Confetti stars */}

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type InstallState =
   | "hidden" // already installed or not applicable
+  | "pending-installable" // supported browser, waiting for beforeinstallprompt
   | "installable" // beforeinstallprompt fired — show Install button
   | "ios-safari" // iOS Safari — show Add to Home Screen guide
   | "unsupported"; // browser doesn't support PWA install
@@ -33,7 +34,7 @@ function detectState(): InstallState {
 
   // If beforeinstallprompt is supported, wait for it (Chrome, Edge, Samsung, Opera)
   if ("BeforeInstallPromptEvent" in window || /Chrome|Edg/.test(ua))
-    return "hidden"; // will become "installable" when event fires
+    return "pending-installable"; // will become "installable" when event fires
 
   // Everything else (Firefox, Safari desktop, etc.)
   return "unsupported";
@@ -41,8 +42,10 @@ function detectState(): InstallState {
 
 export default function InstallPrompt({
   variant = "banner",
+  persistent = false,
 }: {
   variant?: "banner" | "card" | "hero" | "mini";
+  persistent?: boolean;
 }) {
   const [state, setState] = useState<InstallState>(() => detectState());
   const [deferredPrompt, setDeferredPrompt] =
@@ -80,7 +83,7 @@ export default function InstallPrompt({
     setDeferredPrompt(null);
   }, [deferredPrompt]);
 
-  if (state === "hidden" || dismissed) return null;
+  if (state === "hidden" || (!persistent && dismissed)) return null;
 
   if (variant === "mini") {
     if (state === "installable") {
@@ -92,13 +95,15 @@ export default function InstallPrompt({
             exit={{ opacity: 0, y: -8 }}
             className="app-card relative px-3 py-2.5"
           >
-            <button
-              onClick={() => setDismissed(true)}
-              className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] text-gray-500 cursor-pointer"
-              aria-label="Dismiss"
-            >
-              ✕
-            </button>
+            {!persistent && (
+              <button
+                onClick={() => setDismissed(true)}
+                className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] text-gray-500 cursor-pointer"
+                aria-label="Dismiss"
+              >
+                ✕
+              </button>
+            )}
             <div className="flex items-center gap-2.5 pr-6">
               <span className="text-base" aria-hidden="true">
                 📲
@@ -128,15 +133,43 @@ export default function InstallPrompt({
             exit={{ opacity: 0, y: -8 }}
             className="app-card relative px-3 py-2.5"
           >
-            <button
-              onClick={() => setDismissed(true)}
-              className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] text-gray-500 cursor-pointer"
-              aria-label="Dismiss"
-            >
-              ✕
-            </button>
+            {!persistent && (
+              <button
+                onClick={() => setDismissed(true)}
+                className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] text-gray-500 cursor-pointer"
+                aria-label="Dismiss"
+              >
+                ✕
+              </button>
+            )}
             <p className="text-xs text-gray-700 font-semibold pr-6">
               Install tip: Safari Share then Add to Home Screen.
+            </p>
+          </motion.div>
+        </AnimatePresence>
+      );
+    }
+
+    if (state === "pending-installable") {
+      return (
+        <AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="app-card relative px-3 py-2.5"
+          >
+            {!persistent && (
+              <button
+                onClick={() => setDismissed(true)}
+                className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] text-gray-500 cursor-pointer"
+                aria-label="Dismiss"
+              >
+                ✕
+              </button>
+            )}
+            <p className="text-xs text-gray-700 font-semibold pr-6">
+              Install tip: Tap browser menu, then Add to Home Screen.
             </p>
           </motion.div>
         </AnimatePresence>
@@ -163,13 +196,15 @@ export default function InstallPrompt({
           </div>
 
           {/* Dismiss */}
-          <button
-            onClick={() => setDismissed(true)}
-            className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/15 flex items-center justify-center text-xs text-white/70 cursor-pointer hover:bg-white/25 z-10"
-            aria-label="Dismiss"
-          >
-            ✕
-          </button>
+          {!persistent && (
+            <button
+              onClick={() => setDismissed(true)}
+              className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/15 flex items-center justify-center text-xs text-white/70 cursor-pointer hover:bg-white/25 z-10"
+              aria-label="Dismiss"
+            >
+              ✕
+            </button>
+          )}
 
           <div className="relative z-1">
             <div className="flex items-center gap-3 mb-3">
@@ -268,6 +303,16 @@ export default function InstallPrompt({
                 </div>
               </div>
             )}
+
+            {state === "pending-installable" && (
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/15">
+                <p className="text-sm text-violet-100 leading-relaxed">
+                  Install is supported here. If the install button is not shown
+                  yet, tap your browser menu and choose
+                  <strong> Add to Home Screen</strong>.
+                </p>
+              </div>
+            )}
           </div>
         </motion.div>
       </AnimatePresence>
@@ -289,13 +334,15 @@ export default function InstallPrompt({
         className={wrapperClass}
       >
         {/* Dismiss button */}
-        <button
-          onClick={() => setDismissed(true)}
-          className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs text-gray-500 cursor-pointer hover:bg-gray-300"
-          aria-label="Dismiss"
-        >
-          ✕
-        </button>
+        {!persistent && (
+          <button
+            onClick={() => setDismissed(true)}
+            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs text-gray-500 cursor-pointer hover:bg-gray-300"
+            aria-label="Dismiss"
+          >
+            ✕
+          </button>
+        )}
 
         {state === "installable" && (
           <div className="flex items-center gap-3">
@@ -359,6 +406,22 @@ export default function InstallPrompt({
               <strong>Samsung Internet</strong> on Android — or{" "}
               <strong>Safari</strong> on iPhone/iPad.
             </p>
+          </div>
+        )}
+
+        {state === "pending-installable" && (
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl bg-linear-to-br from-violet-100 to-purple-100 flex items-center justify-center text-xl shrink-0 border border-violet-200">
+              📲
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-extrabold text-gray-900 text-sm leading-tight">
+                Install this app
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Tap your browser menu and choose Add to Home Screen.
+              </p>
+            </div>
           </div>
         )}
       </motion.div>

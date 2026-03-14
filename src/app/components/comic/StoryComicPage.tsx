@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ComicPage } from "../../data/comicPages";
 import ComicIllustration from "../ComicIllustration";
 import WordVisualIcon from "../WordVisualIcon";
@@ -91,6 +91,50 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
   const [picked, setPicked] = useState<string | null>(null);
   const [rewardText, setRewardText] = useState("");
   const [reading, setReading] = useState(false);
+  const [focusPulsePanel, setFocusPulsePanel] = useState<number | null>(null);
+  const panelRefs = useRef<Array<HTMLElement | null>>([]);
+  const previousPanel = useRef(1);
+  const prefersReducedMotion = useReducedMotion();
+
+  const isLowEndPhone = useMemo(() => {
+    const isPhone = window.matchMedia("(max-width: 768px)").matches;
+    const cpuCores = navigator.hardwareConcurrency ?? 4;
+    const memory =
+      (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
+    const saveData =
+      (
+        navigator as Navigator & {
+          connection?: {
+            saveData?: boolean;
+          };
+        }
+      ).connection?.saveData ?? false;
+
+    return isPhone && (cpuCores <= 4 || memory <= 4 || saveData);
+  }, []);
+
+  const panelReveal = useMemo(
+    () =>
+      prefersReducedMotion || isLowEndPhone
+        ? {
+            initial: { opacity: 0 },
+            animate: { opacity: 1 },
+            transition: { duration: 0.16, ease: "linear" as const },
+          }
+        : {
+            initial: { opacity: 0, y: 4, scale: 0.992 },
+            animate: { opacity: 1, y: 0, scale: 1 },
+            transition: { duration: 0.24, ease: "easeOut" as const },
+          },
+    [prefersReducedMotion, isLowEndPhone],
+  );
+
+  const panelClass = (panelNumber: number) =>
+    `rounded-3xl border-4 border-gray-900 bg-white p-3 shadow-[6px_6px_0_#111827] focus:outline-none transition-shadow duration-300 ${
+      focusPulsePanel === panelNumber
+        ? "ring-2 ring-emerald-300 shadow-[0_0_0_2px_rgba(16,185,129,0.28),6px_6px_0_#111827]"
+        : ""
+    }`;
 
   const dialog = page.dialog || [];
   const introLine = dialog[0];
@@ -162,6 +206,38 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
     setTimeout(() => setRewardText(""), 1200);
   };
 
+  useEffect(() => {
+    const movedForward = activePanel > previousPanel.current;
+    previousPanel.current = activePanel;
+    if (!movedForward || activePanel <= 1) return;
+
+    const nextPanel = panelRefs.current[activePanel - 1];
+    if (!nextPanel) return;
+
+    setFocusPulsePanel(activePanel);
+
+    const behavior: ScrollBehavior = prefersReducedMotion ? "auto" : "smooth";
+
+    // Wait a tick so the newly revealed panel has final layout before scrolling.
+    const scrollTimer = window.setTimeout(() => {
+      nextPanel.scrollIntoView({
+        behavior,
+        block: "start",
+        inline: "nearest",
+      });
+      nextPanel.focus({ preventScroll: true });
+    }, 40);
+
+    const pulseTimer = window.setTimeout(() => {
+      setFocusPulsePanel(null);
+    }, 380);
+
+    return () => {
+      window.clearTimeout(scrollTimer);
+      window.clearTimeout(pulseTimer);
+    };
+  }, [activePanel, prefersReducedMotion]);
+
   return (
     <div className="story-comic-page w-full max-w-2xl">
       <div className="mb-3 rounded-3xl border-3 border-gray-900 bg-linear-to-br from-cyan-100 via-yellow-50 to-pink-100 p-3 shadow-[5px_5px_0_#111827]">
@@ -174,9 +250,14 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
           </div>
           <button
             onClick={handleReadPanel}
-            className="min-h-12 rounded-full border-3 border-gray-900 bg-yellow-300 px-4 text-sm font-black text-gray-900 shadow-[3px_3px_0_#111827]"
+            disabled={reading}
+            aria-label="Read this panel aloud"
+            className="min-h-12 rounded-full border-3 border-gray-900 bg-yellow-300 px-4 text-sm font-black text-gray-900 shadow-[3px_3px_0_#111827] active:translate-y-px active:shadow-[2px_2px_0_#111827] disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {reading ? "Reading..." : "Read Panel"}
+            <span className="inline-flex items-center gap-1.5">
+              <span aria-hidden>{reading ? "⏳" : "🔊"}</span>
+              <span>{reading ? "Reading..." : "Read Panel"}</span>
+            </span>
           </button>
         </div>
 
@@ -198,9 +279,14 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
       <div className="space-y-3">
         {activePanel >= 1 && (
           <motion.section
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-3xl border-4 border-gray-900 bg-white p-3 shadow-[6px_6px_0_#111827]"
+            ref={(el) => {
+              panelRefs.current[0] = el;
+            }}
+            tabIndex={-1}
+            initial={panelReveal.initial}
+            animate={panelReveal.animate}
+            transition={panelReveal.transition}
+            className={panelClass(1)}
           >
             <div className="rounded-2xl border-3 border-gray-900 bg-sky-50 p-2">
               <ComicIllustration
@@ -220,9 +306,14 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
 
         {activePanel >= 2 && (
           <motion.section
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-3xl border-4 border-gray-900 bg-white p-3 shadow-[6px_6px_0_#111827]"
+            ref={(el) => {
+              panelRefs.current[1] = el;
+            }}
+            tabIndex={-1}
+            initial={panelReveal.initial}
+            animate={panelReveal.animate}
+            transition={panelReveal.transition}
+            className={panelClass(2)}
           >
             <div className="rounded-2xl border-2 border-dashed border-violet-700 bg-violet-50 p-2 space-y-2">
               {teachingLines.map((line, idx) => (
@@ -239,9 +330,14 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
 
         {hasVisualPractice && activePanel >= 3 && (
           <motion.section
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-3xl border-4 border-gray-900 bg-white p-3 shadow-[6px_6px_0_#111827]"
+            ref={(el) => {
+              panelRefs.current[2] = el;
+            }}
+            tabIndex={-1}
+            initial={panelReveal.initial}
+            animate={panelReveal.animate}
+            transition={panelReveal.transition}
+            className={panelClass(3)}
           >
             <p className="mb-2 text-xs font-black uppercase tracking-wide text-sky-800">
               {page.boardLabel || "Picture Word Cards"}
@@ -272,9 +368,14 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
 
         {hasVisualPractice && activePanel >= 4 && (
           <motion.section
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-3xl border-4 border-gray-900 bg-white p-3 shadow-[6px_6px_0_#111827]"
+            ref={(el) => {
+              panelRefs.current[3] = el;
+            }}
+            tabIndex={-1}
+            initial={panelReveal.initial}
+            animate={panelReveal.animate}
+            transition={panelReveal.transition}
+            className={panelClass(4)}
           >
             <p className="text-sm font-black text-gray-900">Mini Practice</p>
             <p className="mb-2 text-sm font-semibold text-gray-700">
