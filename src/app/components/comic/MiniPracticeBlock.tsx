@@ -31,7 +31,7 @@ export default function MiniPracticeBlock({
       </h4>
       <p className="text-sm font-semibold text-gray-700">{activity.prompt}</p>
 
-      <div className="mt-3 grid grid-cols-3 gap-2">
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
         {activity.options.map((option) => (
           <VisualChoiceCard
             key={option.id}

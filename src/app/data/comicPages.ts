@@ -28,7 +28,7 @@ export interface ComicPage {
   scene?: string;
 }
 
-export const comicPages: ComicPage[] = [
+const comicPagesData: ComicPage[] = [
   {
     pageNumber: 1,
     title: "The Word Pattern Adventure",
@@ -275,22 +275,64 @@ export const comicPages: ComicPage[] = [
   },
   {
     pageNumber: 12,
-    title: "The End",
-    background: "bg-linear-to-b from-sun to-pink",
-    scene: "celebration",
+    title: "What We Have Learned",
+    background: "bg-linear-to-b from-peach to-pink",
+    scene: "classroom-board",
     dialog: [
       {
-        character: "narrator",
-        text: "Ana and Ben became better readers because they learned word patterns.",
+        character: "teacher",
+        text: "Let's review what we have learned before the next lessons!",
+      },
+      {
+        character: "ana",
+        text: "✅ Word patterns help me read words correctly.",
+      },
+      {
+        character: "ben",
+        text: "✅ Words with the same ending sound belong to the same word family.",
+      },
+      {
+        character: "ana",
+        text: "✅ The -at word family includes: cat, bat, hat, mat.",
+      },
+      {
+        character: "ben",
+        text: "✅ The -an word family includes: fan, man, pan, ran, van, can.",
+      },
+      {
+        character: "ana",
+        text: "✅ Short vowel sounds help me read words like pig, pen, cup, and bed.",
+      },
+      {
+        character: "ben",
+        text: "✅ Blends are letters that work together like sh, br, and fr.",
+      },
+      {
+        character: "ana",
+        text: "✅ Context clues help me choose the correct word in a sentence.",
       },
       {
         character: "students",
-        text: "Hooray for reading!",
+        text: "✅ Practicing word patterns makes reading easier and more enjoyable.",
+      },
+      {
+        character: "teacher",
+        text: "Awesome! Next, let's practice comprehension and fluency.",
       },
     ],
+    boardWords: [
+      "Word Patterns",
+      "Word Family",
+      "-at",
+      "-an",
+      "Short Vowels",
+      "Blends",
+      "Context Clues",
+    ],
+    boardLabel: "What We Have Learned",
   },
   {
-    pageNumber: 13,
+    pageNumber: 14,
     title: "Reading Fluency",
     background: "bg-linear-to-b from-sky to-mint",
     scene: "classroom",
@@ -356,7 +398,7 @@ export const comicPages: ComicPage[] = [
     boardLabel: "Reading Fluency Practice",
   },
   {
-    pageNumber: 14,
+    pageNumber: 13,
     title: "Reading Comprehension",
     background: "bg-linear-to-b from-lavender to-peach",
     scene: "classroom-board",
@@ -423,7 +465,7 @@ export const comicPages: ComicPage[] = [
   },
   {
     pageNumber: 15,
-    title: "The End",
+    title: "The End: Reading Champions",
     background: "bg-linear-to-b from-sun to-pink",
     scene: "celebration",
     isEnd: true,
@@ -439,3 +481,7 @@ export const comicPages: ComicPage[] = [
     ],
   },
 ];
+
+export const comicPages: ComicPage[] = comicPagesData.sort(
+  (a: ComicPage, b: ComicPage) => a.pageNumber - b.pageNumber,
+);

@@ -4,6 +4,33 @@ import { motion } from "framer-motion";
 import { EndIllustration } from "./ComicIllustration";
 
 export default function EndPage() {
+  const recapCards = [
+    {
+      icon: "✅",
+      title: "Word Patterns",
+      text: "Patterns help us read faster.",
+    },
+    {
+      icon: "🏠",
+      title: "Word Families",
+      text: "Same endings make reading easier.",
+    },
+    { icon: "🐱", title: "-at Family", text: "cat, bat, hat, mat" },
+    { icon: "🌀", title: "-an Family", text: "fan, man, pan, ran, van, can" },
+    { icon: "🔤", title: "Short Vowels", text: "pig, pen, cup, bed" },
+    { icon: "🔗", title: "Blends", text: "sh, br, fr work together." },
+    {
+      icon: "🧩",
+      title: "Context Clues",
+      text: "Clues help us pick the right word.",
+    },
+    {
+      icon: "⭐",
+      title: "Practice",
+      text: "Practice makes reading fun and strong.",
+    },
+  ];
+
   return (
     <div className="relative flex flex-col items-center justify-center min-h-[50vh] sm:min-h-[60vh] text-center px-3 sm:px-4 overflow-hidden">
       <div className="comic-burst" aria-hidden />
@@ -77,46 +104,25 @@ export default function EndPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
-        className="bg-emerald-50 rounded-2xl p-4 sm:p-5 max-w-xl shadow-sm mx-2 border-2 border-emerald-200"
+        className="bg-linear-to-br from-emerald-50 via-white to-sky-50 rounded-2xl p-4 sm:p-5 max-w-xl shadow-sm mx-2 border-2 border-emerald-200"
       >
         <h3 className="font-extrabold text-emerald-700 text-base sm:text-lg mb-2 sm:mb-3">
-          ⭐ What We Learned
+          ⭐ Quick Learning Recap
         </h3>
-        <div className="text-left text-emerald-700 space-y-3 text-sm sm:text-base">
-          <div>
-            <p className="font-black">📖 Fluency</p>
-            <ul className="mt-1 space-y-1.5 text-emerald-600">
-              <li>✅ Reading words smoothly and clearly</li>
-              <li>
-                ✅ Recognizing word patterns like the -at family (cat, bat, hat,
-                mat)
-              </li>
-              <li>
-                ✅ Recognizing the -an family (fan, man, pan, ran, van, can)
-              </li>
-              <li>
-                ✅ Reading words with short vowel sounds (pig, pen, cup, bed)
-              </li>
-              <li>✅ Reading words with blends (sh, br, fr)</li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-black">🧠 Comprehension</p>
-            <ul className="mt-1 space-y-1.5 text-emerald-600">
-              <li>✅ Understanding the meaning of words</li>
-              <li>
-                ✅ Identifying synonyms (words with the same meaning) like big -
-                large
-              </li>
-              <li>
-                ✅ Identifying antonyms (words with opposite meaning) like happy
-                - sad
-              </li>
-              <li>
-                ✅ Using context clues to choose the correct word in a sentence
-              </li>
-            </ul>
-          </div>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {recapCards.map((card) => (
+            <div
+              key={card.title}
+              className="rounded-xl border-2 border-emerald-200 bg-white px-3 py-2 text-left"
+            >
+              <p className="text-sm font-black text-emerald-800">
+                {card.icon} {card.title}
+              </p>
+              <p className="mt-0.5 text-xs font-semibold text-emerald-700">
+                {card.text}
+              </p>
+            </div>
+          ))}
         </div>
       </motion.div>
 

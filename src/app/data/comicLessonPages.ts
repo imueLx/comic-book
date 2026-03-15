@@ -52,7 +52,7 @@ export interface ComicLessonPageData {
 
 export const comicLessonPages: ComicLessonPageData[] = [
   {
-    pageNumber: 13,
+    pageNumber: 14,
     sceneTitle: "Reading Fluency",
     narration:
       "Teacher Mia guides a fun fluency challenge while Tom cheers the class.",

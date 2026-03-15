@@ -138,7 +138,15 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
 
   const dialog = page.dialog || [];
   const introLine = dialog[0];
-  const teachingLines = dialog.slice(1, 4);
+  const teachingLines = dialog.slice(1);
+  const linesPerDialogPanel = page.pageNumber === 13 ? 2 : 3;
+  const dialogPanels = useMemo(() => {
+    const chunks: Array<typeof teachingLines> = [];
+    for (let idx = 0; idx < teachingLines.length; idx += linesPerDialogPanel) {
+      chunks.push(teachingLines.slice(idx, idx + linesPerDialogPanel));
+    }
+    return chunks;
+  }, [teachingLines, linesPerDialogPanel]);
 
   const visualWords = useMemo(() => {
     if (page.boardWords?.length) {
@@ -157,7 +165,11 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
   const miniPracticeWords = visualWords.slice(0, 3);
   const displayGridClass = getAdaptiveGridClass(displayWords.length);
   const miniGridClass = getAdaptiveGridClass(miniPracticeWords.length);
-  const totalPanels = hasVisualPractice ? 4 : 2;
+  const visualPanelNumber = 2 + dialogPanels.length;
+  const miniPracticePanelNumber = visualPanelNumber + 1;
+  const totalPanels = hasVisualPractice
+    ? miniPracticePanelNumber
+    : Math.max(2, 1 + dialogPanels.length);
 
   const currentWordTarget = useMemo(() => {
     if (page.isQuiz && page.quizAnswer) return page.quizAnswer.toLowerCase();
@@ -168,9 +180,7 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
     return visualWords[0] || "";
   }, [page.isQuiz, page.quizAnswer, page.highlightPattern, visualWords]);
 
-  const interactionSolved = picked === currentWordTarget;
-  const canAdvance =
-    activePanel < totalPanels ? activePanel < 4 || interactionSolved : false;
+  const canAdvance = activePanel < totalPanels;
 
   const handleReadPanel = async () => {
     if (reading) return;
@@ -178,11 +188,12 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
     try {
       if (activePanel === 1 && introLine) {
         await narrateDialog(introLine.character, introLine.text);
-      } else if (activePanel === 2 && teachingLines.length) {
-        for (const line of teachingLines) {
+      } else if (activePanel >= 2 && activePanel < visualPanelNumber) {
+        const lines = dialogPanels[activePanel - 2] || [];
+        for (const line of lines) {
           await narrateDialog(line.character, line.text);
         }
-      } else if (activePanel === 3) {
+      } else if (hasVisualPractice && activePanel === visualPanelNumber) {
         await narrateDialog(
           "teacher",
           page.boardLabel || "Look at these picture words.",
@@ -304,40 +315,49 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
           </motion.section>
         )}
 
-        {activePanel >= 2 && (
-          <motion.section
-            ref={(el) => {
-              panelRefs.current[1] = el;
-            }}
-            tabIndex={-1}
-            initial={panelReveal.initial}
-            animate={panelReveal.animate}
-            transition={panelReveal.transition}
-            className={panelClass(2)}
-          >
-            <div className="rounded-2xl border-2 border-dashed border-violet-700 bg-violet-50 p-2 space-y-2">
-              {teachingLines.map((line, idx) => (
-                <SpeechBubble
-                  key={`${line.character}-${idx}`}
-                  character={line.character}
-                  text={line.text}
-                  right={line.character === "ben" || line.character === "tom"}
-                />
-              ))}
-            </div>
-          </motion.section>
-        )}
+        {dialogPanels.map((chunk, chunkIndex) => {
+          const panelNumber = 2 + chunkIndex;
+          if (activePanel < panelNumber) return null;
 
-        {hasVisualPractice && activePanel >= 3 && (
+          return (
+            <motion.section
+              key={`dialog-panel-${panelNumber}`}
+              ref={(el) => {
+                panelRefs.current[panelNumber - 1] = el;
+              }}
+              tabIndex={-1}
+              initial={panelReveal.initial}
+              animate={panelReveal.animate}
+              transition={panelReveal.transition}
+              className={panelClass(panelNumber)}
+            >
+              <p className="mb-2 text-xs font-black uppercase tracking-wide text-violet-700">
+                Comic Talk {chunkIndex + 1}
+              </p>
+              <div className="rounded-2xl border-2 border-dashed border-violet-700 bg-violet-50 p-2 grid grid-cols-1 gap-2">
+                {chunk.map((line, idx) => (
+                  <SpeechBubble
+                    key={`${line.character}-${chunkIndex}-${idx}`}
+                    character={line.character}
+                    text={line.text}
+                    right={line.character === "ben" || line.character === "tom"}
+                  />
+                ))}
+              </div>
+            </motion.section>
+          );
+        })}
+
+        {hasVisualPractice && activePanel >= visualPanelNumber && (
           <motion.section
             ref={(el) => {
-              panelRefs.current[2] = el;
+              panelRefs.current[visualPanelNumber - 1] = el;
             }}
             tabIndex={-1}
             initial={panelReveal.initial}
             animate={panelReveal.animate}
             transition={panelReveal.transition}
-            className={panelClass(3)}
+            className={panelClass(visualPanelNumber)}
           >
             <p className="mb-2 text-xs font-black uppercase tracking-wide text-sky-800">
               {page.boardLabel || "Picture Word Cards"}
@@ -366,16 +386,16 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
           </motion.section>
         )}
 
-        {hasVisualPractice && activePanel >= 4 && (
+        {hasVisualPractice && activePanel >= miniPracticePanelNumber && (
           <motion.section
             ref={(el) => {
-              panelRefs.current[3] = el;
+              panelRefs.current[miniPracticePanelNumber - 1] = el;
             }}
             tabIndex={-1}
             initial={panelReveal.initial}
             animate={panelReveal.animate}
             transition={panelReveal.transition}
-            className={panelClass(4)}
+            className={panelClass(miniPracticePanelNumber)}
           >
             <p className="text-sm font-black text-gray-900">Mini Practice</p>
             <p className="mb-2 text-sm font-semibold text-gray-700">

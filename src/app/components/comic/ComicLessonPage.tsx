@@ -64,7 +64,7 @@ export default function ComicLessonPage({ data }: ComicLessonPageProps) {
   };
 
   return (
-    <div className="relative w-full max-w-2xl">
+    <div className="relative w-full max-w-3xl">
       <div className="mb-2 rounded-3xl border-3 border-gray-900 bg-linear-to-br from-cyan-100 via-yellow-50 to-pink-100 p-3 shadow-[5px_5px_0_#111827]">
         <div className="mb-2 flex items-center justify-between">
           <p className="rounded-full border-2 border-gray-900 bg-white px-3 py-1 text-xs font-black uppercase text-gray-700">
@@ -77,14 +77,14 @@ export default function ComicLessonPage({ data }: ComicLessonPageProps) {
           Image-first comic learning
         </p>
 
-        <div className="mt-3 grid grid-cols-4 gap-2 rounded-2xl border-2 border-gray-800 bg-white/70 p-2">
+        <div className="mt-3 grid grid-cols-2 gap-2 rounded-2xl border-2 border-gray-800 bg-white/70 p-2 sm:grid-cols-4">
           {data.charactersOnScreen.map((char) => (
             <CharacterSprite key={`${char.id}-${char.x}`} character={char} />
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
         {availablePanels >= 1 && (
           <ComicPanel variant="wide" delay={0.03}>
             <NarrationBox text={data.narration} />
@@ -111,7 +111,7 @@ export default function ComicLessonPage({ data }: ComicLessonPageProps) {
             <p className="text-xs font-semibold text-gray-700">
               Visual words first
             </p>
-            <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className="mt-2 grid grid-cols-2 gap-2.5">
               {data.visuals.slice(0, 4).map((item) => (
                 <TapToHearImage
                   key={item.id}

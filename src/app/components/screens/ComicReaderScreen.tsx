@@ -6,6 +6,7 @@ import { comicPages } from "../../data/comicPages";
 import { Lesson } from "../../lib/types";
 import SpeechBubble from "../SpeechBubble";
 import Chalkboard from "../Chalkboard";
+import ComicIllustration from "../ComicIllustration";
 import { TomTheCat } from "../CharacterAvatar";
 import ProgressBar from "../ProgressBar";
 import AudioButton from "../AudioButton";
@@ -196,6 +197,10 @@ export default function ComicReaderScreen({
                   </motion.button>
                 </div>
               )}
+
+              <div className="mb-3 rounded-2xl border-2 border-gray-900 bg-sky-50 p-2">
+                <ComicIllustration pageNumber={page.pageNumber} />
+              </div>
 
               <div className="space-y-3">
                 {page.dialog.map((line, i) => (

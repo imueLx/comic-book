@@ -10,9 +10,9 @@ interface ComicPanelProps {
 }
 
 const variantClasses = {
-  wide: "col-span-2 min-h-32",
+  wide: "col-span-1 min-h-32 lg:col-span-2",
   half: "col-span-1 min-h-30",
-  focus: "col-span-2 min-h-40",
+  focus: "col-span-1 min-h-40 lg:col-span-2",
 };
 
 export default function ComicPanel({
