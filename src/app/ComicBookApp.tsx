@@ -21,17 +21,30 @@ export default function ComicBookApp({ onBack }: ComicBookAppProps) {
   const page = comicPages[currentPage - 1];
   const contentScrollRef = useRef<HTMLDivElement | null>(null);
 
+  const resetScrollToTop = useCallback(() => {
+    contentScrollRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    window.scrollTo({ top: 0, behavior: "auto" });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
+
   // Swipe gesture support
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
 
   const goNext = useCallback(() => {
-    if (currentPage < totalPages) setCurrentPage((p) => p + 1);
-  }, [currentPage, totalPages]);
+    if (currentPage < totalPages) {
+      resetScrollToTop();
+      setCurrentPage((p) => p + 1);
+    }
+  }, [currentPage, totalPages, resetScrollToTop]);
 
   const goPrev = useCallback(() => {
-    if (currentPage > 1) setCurrentPage((p) => p - 1);
-  }, [currentPage]);
+    if (currentPage > 1) {
+      resetScrollToTop();
+      setCurrentPage((p) => p - 1);
+    }
+  }, [currentPage, resetScrollToTop]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -66,8 +79,16 @@ export default function ComicBookApp({ onBack }: ComicBookAppProps) {
   );
 
   useEffect(() => {
-    contentScrollRef.current?.scrollTo({ top: 0, behavior: "auto" });
-  }, [currentPage]);
+    resetScrollToTop();
+    const raf1 = window.requestAnimationFrame(() => {
+      resetScrollToTop();
+      const raf2 = window.requestAnimationFrame(() => {
+        resetScrollToTop();
+      });
+      return () => window.cancelAnimationFrame(raf2);
+    });
+    return () => window.cancelAnimationFrame(raf1);
+  }, [currentPage, resetScrollToTop]);
 
   return (
     <main

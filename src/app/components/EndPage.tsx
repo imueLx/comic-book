@@ -1,39 +1,89 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { useMemo, useState } from "react";
+import { speak } from "../lib/audio";
 import { EndIllustration } from "./ComicIllustration";
 
 export default function EndPage() {
+  const prefersReducedMotion = useReducedMotion();
+  const [activeCard, setActiveCard] = useState<string | null>(null);
+
+  const isLowEndPhone = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    const isPhone = window.matchMedia("(max-width: 768px)").matches;
+    const cpuCores = navigator.hardwareConcurrency ?? 4;
+    const memory =
+      (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
+    return isPhone && (cpuCores <= 4 || memory <= 4);
+  }, []);
+
+  const gentleMotion = prefersReducedMotion || isLowEndPhone;
+
   const recapCards = [
     {
       icon: "✅",
       title: "Word Patterns",
       text: "Patterns help us read faster.",
+      audioText: "Word patterns help me read words correctly.",
     },
     {
       icon: "🏠",
       title: "Word Families",
       text: "Same endings make reading easier.",
+      audioText:
+        "Words with the same ending sound belong to the same word family.",
     },
-    { icon: "🐱", title: "-at Family", text: "cat, bat, hat, mat" },
-    { icon: "🌀", title: "-an Family", text: "fan, man, pan, ran, van, can" },
-    { icon: "🔤", title: "Short Vowels", text: "pig, pen, cup, bed" },
-    { icon: "🔗", title: "Blends", text: "sh, br, fr work together." },
+    {
+      icon: "🐱",
+      title: "-at Family",
+      text: "cat, bat, hat, mat",
+      audioText: "The at word family includes cat, bat, hat, and mat.",
+    },
+    {
+      icon: "🌀",
+      title: "-an Family",
+      text: "fan, man, pan, ran, van, can",
+      audioText:
+        "The an word family includes fan, man, pan, ran, van, and can.",
+    },
+    {
+      icon: "🔤",
+      title: "Short Vowels",
+      text: "pig, pen, cup, bed",
+      audioText:
+        "Short vowel sounds help me read words like pig, pen, cup, and bed.",
+    },
+    {
+      icon: "🔗",
+      title: "Blends",
+      text: "sh, br, fr work together.",
+      audioText: "Blends are letters that work together like sh, br, and fr.",
+    },
     {
       icon: "🧩",
       title: "Context Clues",
       text: "Clues help us pick the right word.",
+      audioText: "Context clues help me choose the correct word in a sentence.",
     },
     {
       icon: "⭐",
       title: "Practice",
       text: "Practice makes reading fun and strong.",
+      audioText:
+        "Practicing word patterns makes reading easier and more enjoyable.",
     },
   ];
 
+  const handleReadCard = async (title: string, audioText: string) => {
+    setActiveCard(title);
+    await speak(audioText, 0.86, 1.06);
+    setTimeout(() => setActiveCard(null), 700);
+  };
+
   return (
     <div className="relative flex flex-col items-center justify-center min-h-[50vh] sm:min-h-[60vh] text-center px-3 sm:px-4 overflow-hidden">
-      <div className="comic-burst" aria-hidden />
+      {!gentleMotion && <div className="comic-burst" aria-hidden />}
       {/* Celebration */}
       <motion.div
         initial={{ scale: 0 }}
@@ -53,6 +103,10 @@ export default function EndPage() {
         The End!
       </motion.h2>
 
+      <p className="mb-3 rounded-full border-2 border-emerald-300 bg-white/90 px-3 py-1 text-xs font-black text-emerald-800">
+        ✅ You finished 15/15 pages!
+      </p>
+
       {/* Celebration Illustration */}
       <EndIllustration />
 
@@ -64,14 +118,18 @@ export default function EndPage() {
         style={{ boxShadow: "6px 6px 0 #111827" }}
       >
         <span className="sfx-tag left-4 -top-5">YAY!</span>
-        <p className="text-base sm:text-xl text-gray-600 mb-3 sm:mb-4">
-          📖 Ana and Ben became <strong>better readers</strong> because they
-          learned <strong>word patterns</strong>.
+        <p className="text-base sm:text-xl text-gray-700 mb-2 sm:mb-3 font-semibold">
+          📖 Ana and Ben became stronger readers!
+        </p>
+        <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
+          They used patterns, blends, and clues to read with confidence.
         </p>
         <motion.p
           className="text-2xl font-bold text-violet-600"
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
+          animate={
+            gentleMotion ? { opacity: [0.9, 1, 0.9] } : { scale: [1, 1.05, 1] }
+          }
+          transition={{ duration: 2, repeat: gentleMotion ? 0 : Infinity }}
         >
           🎵 Hooray for reading! 🎵
         </motion.p>
@@ -87,11 +145,11 @@ export default function EndPage() {
         {["👩‍🏫", "👧", "👦", "🐱"].map((emoji, i) => (
           <motion.span
             key={i}
-            animate={{ y: [0, -15, 0] }}
+            animate={gentleMotion ? { y: 0 } : { y: [0, -15, 0] }}
             transition={{
               delay: i * 0.15,
               duration: 1.2,
-              repeat: 3,
+              repeat: gentleMotion ? 0 : 3,
             }}
           >
             {emoji}
@@ -109,37 +167,55 @@ export default function EndPage() {
         <h3 className="font-extrabold text-emerald-700 text-base sm:text-lg mb-2 sm:mb-3">
           ⭐ Quick Learning Recap
         </h3>
+        <p className="mb-3 text-xs sm:text-sm font-semibold text-emerald-700">
+          Tap a card to hear it read aloud.
+        </p>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {recapCards.map((card) => (
-            <div
+            <button
               key={card.title}
-              className="rounded-xl border-2 border-emerald-200 bg-white px-3 py-2 text-left"
+              onClick={() => handleReadCard(card.title, card.audioText)}
+              className={`w-full min-h-20 rounded-xl border-2 bg-white px-3 py-2 text-left shadow-sm transition-all active:translate-y-px ${
+                activeCard === card.title
+                  ? "border-emerald-500 ring-2 ring-emerald-200"
+                  : "border-emerald-200"
+              }`}
+              aria-label={`Read ${card.title}`}
             >
-              <p className="text-sm font-black text-emerald-800">
-                {card.icon} {card.title}
+              <p className="text-sm font-black text-emerald-800 flex items-center justify-between gap-2">
+                <span>
+                  {card.icon} {card.title}
+                </span>
+                <span className="text-xs font-extrabold text-emerald-600">
+                  🔊
+                </span>
               </p>
-              <p className="mt-0.5 text-xs font-semibold text-emerald-700">
+              <p className="mt-0.5 text-xs sm:text-sm font-semibold text-emerald-700 leading-snug">
                 {card.text}
               </p>
-            </div>
+            </button>
           ))}
         </div>
       </motion.div>
 
       {/* Confetti stars */}
       <div className="flex gap-2 mt-6">
-        {Array.from({ length: 5 }).map((_, i) => (
+        {Array.from({ length: gentleMotion ? 3 : 5 }).map((_, i) => (
           <motion.span
             key={i}
             className="text-2xl"
-            animate={{
-              y: [0, -15, 0],
-              opacity: [1, 0.6, 1],
-            }}
+            animate={
+              gentleMotion
+                ? { opacity: [0.9, 1, 0.9] }
+                : {
+                    y: [0, -15, 0],
+                    opacity: [1, 0.6, 1],
+                  }
+            }
             transition={{
               delay: i * 0.1,
               duration: 2,
-              repeat: 2,
+              repeat: gentleMotion ? 0 : 2,
             }}
           >
             {["⭐", "🌟", "💫", "✨", "⭐"][i]}
