@@ -2339,6 +2339,151 @@ function CoverScene() {
   );
 }
 
+/* -- Page 13: Reading Comprehension -- */
+function Page13Scene() {
+  return (
+    <svg viewBox="0 0 400 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="400" height="220" rx="8" fill="#EEF2FF" />
+      <rect y="178" width="400" height="42" fill="#FEF3C7" />
+
+      <rect x="72" y="10" width="256" height="34" rx="10" fill="#6366F1" />
+      <text
+        x="200"
+        y="33"
+        textAnchor="middle"
+        fill="#FFFFFF"
+        fontFamily="var(--font-comic), sans-serif"
+        fontSize="18"
+        fontWeight="bold"
+      >
+        Reading Comprehension
+      </text>
+
+      {[
+        { q: "big = ?", a: "large", icon: "📘", x: 20, y: 58, c: "#DBEAFE" },
+        { q: "happy <> ?", a: "sad", icon: "🙂", x: 210, y: 58, c: "#FCE7F3" },
+        { q: "animal?", a: "dog", icon: "🐶", x: 20, y: 118, c: "#DCFCE7" },
+        { q: "move fast", a: "run", icon: "🏃", x: 210, y: 118, c: "#FEF3C7" },
+      ].map((card) => (
+        <g
+          key={`${card.q}-${card.a}`}
+          transform={`translate(${card.x}, ${card.y})`}
+        >
+          <rect
+            width="170"
+            height="46"
+            rx="10"
+            fill={card.c}
+            stroke="#111827"
+            strokeWidth="2"
+          />
+          <text x="10" y="18" fill="#334155" fontSize="11" fontWeight="700">
+            {card.q}
+          </text>
+          <text x="10" y="35" fill="#111827" fontSize="14" fontWeight="800">
+            {card.a}
+          </text>
+          <text x="148" y="31" fontSize="18">
+            {card.icon}
+          </text>
+        </g>
+      ))}
+
+      <text x="190" y="206" fontSize="14">
+        ⭐
+      </text>
+    </svg>
+  );
+}
+
+/* -- Page 14: Reading Fluency -- */
+function Page14Scene() {
+  return (
+    <svg viewBox="0 0 400 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="400" height="220" rx="8" fill="#ECFDF5" />
+      <rect y="178" width="400" height="42" fill="#FEF3C7" />
+
+      <rect x="88" y="10" width="224" height="34" rx="10" fill="#10B981" />
+      <text
+        x="200"
+        y="33"
+        textAnchor="middle"
+        fill="#FFFFFF"
+        fontFamily="var(--font-comic), sans-serif"
+        fontSize="18"
+        fontWeight="bold"
+      >
+        Reading Fluency
+      </text>
+
+      <rect
+        x="40"
+        y="56"
+        width="320"
+        height="66"
+        rx="10"
+        fill="#FFFFFF"
+        stroke="#111827"
+        strokeWidth="2.5"
+      />
+      <text x="56" y="80" fill="#0F172A" fontSize="15" fontWeight="800">
+        cat cake lake ball
+      </text>
+      <text x="56" y="104" fill="#0F172A" fontSize="15" fontWeight="800">
+        light night
+      </text>
+      <text x="320" y="104" fontSize="18">
+        🔊
+      </text>
+
+      <g transform="translate(62, 134)">
+        <rect
+          width="126"
+          height="30"
+          rx="10"
+          fill="#DBEAFE"
+          stroke="#1D4ED8"
+          strokeWidth="2"
+        />
+        <text
+          x="63"
+          y="20"
+          textAnchor="middle"
+          fill="#1E3A8A"
+          fontSize="12"
+          fontWeight="800"
+        >
+          Read smoothly
+        </text>
+      </g>
+      <g transform="translate(212, 134)">
+        <rect
+          width="126"
+          height="30"
+          rx="10"
+          fill="#DCFCE7"
+          stroke="#059669"
+          strokeWidth="2"
+        />
+        <text
+          x="63"
+          y="20"
+          textAnchor="middle"
+          fill="#065F46"
+          fontSize="12"
+          fontWeight="800"
+        >
+          Read clearly
+        </text>
+      </g>
+
+      <text x="186" y="206" fontSize="14">
+        ✨
+      </text>
+    </svg>
+  );
+}
+
 const illustrations: Record<number, () => React.JSX.Element> = {
   2: Page2Scene,
   3: Page3Scene,
@@ -2351,6 +2496,8 @@ const illustrations: Record<number, () => React.JSX.Element> = {
   10: Page10Scene,
   11: Page11Scene,
   12: Page12Scene,
+  13: Page13Scene,
+  14: Page14Scene,
 };
 
 export default function ComicIllustration({

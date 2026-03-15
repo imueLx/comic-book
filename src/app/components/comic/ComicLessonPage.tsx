@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { narrateDialog, speakWord, stopSpeaking } from "../../lib/audio";
 import { ComicLessonPageData } from "../../data/comicLessonPages";
 import AudioReadButton from "./AudioReadButton";
@@ -31,10 +31,26 @@ const bubbleColorMap = {
   tom: "bg-amber-100 border-amber-700",
 };
 
+function getScrollableParent(el: HTMLElement | null): HTMLElement | null {
+  if (!el) return null;
+  let current: HTMLElement | null = el.parentElement;
+  while (current) {
+    const style = window.getComputedStyle(current);
+    const canScrollY = /(auto|scroll)/.test(style.overflowY);
+    if (canScrollY && current.scrollHeight > current.clientHeight) {
+      return current;
+    }
+    current = current.parentElement;
+  }
+  return null;
+}
+
 export default function ComicLessonPage({ data }: ComicLessonPageProps) {
   const [activePanel, setActivePanel] = useState(1);
   const [isReading, setIsReading] = useState(false);
   const [showReward, setShowReward] = useState(false);
+  const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const previousPanel = useRef(1);
 
   const availablePanels = Math.min(activePanel, data.panelLayout.length);
 
@@ -63,6 +79,30 @@ export default function ComicLessonPage({ data }: ComicLessonPageProps) {
     setActivePanel((prev) => Math.min(prev + 1, data.panelLayout.length));
   };
 
+  useEffect(() => {
+    const movedForward = activePanel > previousPanel.current;
+    previousPanel.current = activePanel;
+    if (!movedForward || activePanel <= 1) return;
+
+    const panel = panelRefs.current[activePanel - 1];
+    if (!panel) return;
+
+    const timer = window.setTimeout(() => {
+      const scroller = getScrollableParent(panel);
+      if (scroller) {
+        const scrollerRect = scroller.getBoundingClientRect();
+        const panelRect = panel.getBoundingClientRect();
+        const targetTop =
+          scroller.scrollTop + (panelRect.top - scrollerRect.top) - 8;
+        scroller.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+      } else {
+        panel.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 60);
+
+    return () => window.clearTimeout(timer);
+  }, [activePanel]);
+
   return (
     <div className="relative w-full max-w-3xl">
       <div className="mb-2 rounded-3xl border-3 border-gray-900 bg-linear-to-br from-cyan-100 via-yellow-50 to-pink-100 p-3 shadow-[5px_5px_0_#111827]">
@@ -86,72 +126,100 @@ export default function ComicLessonPage({ data }: ComicLessonPageProps) {
 
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
         {availablePanels >= 1 && (
-          <ComicPanel variant="wide" delay={0.03}>
-            <NarrationBox text={data.narration} />
-            <div className="mt-3 space-y-2">
-              {visibleDialog.slice(0, 2).map((line, index) => (
-                <div
-                  key={`${line.speaker}-${index}`}
-                  className={`relative rounded-2xl border-2 px-3 py-2 text-sm font-semibold text-gray-900 ${bubbleColorMap[line.speaker]}`}
-                >
-                  <p className="mb-0.5 text-xs font-black uppercase text-gray-700">
-                    {speakerNameMap[line.speaker]}
-                  </p>
-                  {line.text}
-                  <span className="absolute -bottom-2 left-6 h-3 w-3 rotate-45 border-r-2 border-b-2 border-inherit bg-inherit" />
-                </div>
-              ))}
-            </div>
-          </ComicPanel>
+          <div
+            ref={(el) => {
+              panelRefs.current[0] = el;
+            }}
+          >
+            <ComicPanel variant="wide" delay={0.03}>
+              <NarrationBox text={data.narration} />
+              <div className="mt-3 space-y-2">
+                {visibleDialog.slice(0, 2).map((line, index) => (
+                  <div
+                    key={`${line.speaker}-${index}`}
+                    className={`relative rounded-2xl border-2 px-3 py-2 text-sm font-semibold text-gray-900 ${bubbleColorMap[line.speaker]}`}
+                  >
+                    <p className="mb-0.5 text-xs font-black uppercase text-gray-700">
+                      {speakerNameMap[line.speaker]}
+                    </p>
+                    {line.text}
+                    <span className="absolute -bottom-2 left-6 h-3 w-3 rotate-45 border-r-2 border-b-2 border-inherit bg-inherit" />
+                  </div>
+                ))}
+              </div>
+            </ComicPanel>
+          </div>
         )}
 
         {availablePanels >= 2 && (
-          <ComicPanel variant="half" delay={0.07}>
-            <h3 className="text-base font-black text-gray-900">Tap To Hear</h3>
-            <p className="text-xs font-semibold text-gray-700">
-              Visual words first
-            </p>
-            <div className="mt-2 grid grid-cols-2 gap-2.5">
-              {data.visuals.slice(0, 4).map((item) => (
-                <TapToHearImage
-                  key={item.id}
-                  emoji={item.emoji}
-                  label={item.label}
-                  hint={item.hint}
-                  onTap={() => speakWord(item.word)}
-                />
-              ))}
-            </div>
-          </ComicPanel>
+          <div
+            ref={(el) => {
+              panelRefs.current[1] = el;
+            }}
+          >
+            <ComicPanel variant="half" delay={0.07}>
+              <h3 className="text-base font-black text-gray-900">
+                Tap To Hear
+              </h3>
+              <p className="text-xs font-semibold text-gray-700">
+                Visual words first
+              </p>
+              <div className="mt-2 grid grid-cols-2 gap-2.5">
+                {data.visuals.slice(0, 4).map((item) => (
+                  <TapToHearImage
+                    key={item.id}
+                    emoji={item.emoji}
+                    label={item.label}
+                    hint={item.hint}
+                    onTap={() => speakWord(item.word)}
+                  />
+                ))}
+              </div>
+            </ComicPanel>
+          </div>
         )}
 
         {availablePanels >= 3 && data.miniActivity && (
-          <ComicPanel variant="half" delay={0.12}>
-            <MiniPracticeBlock
-              activity={data.miniActivity}
-              onCorrect={() => {
-                setShowReward(true);
-                setTimeout(() => setShowReward(false), 1300);
-              }}
-            />
-          </ComicPanel>
+          <div
+            ref={(el) => {
+              panelRefs.current[2] = el;
+            }}
+          >
+            <ComicPanel variant="half" delay={0.12}>
+              <MiniPracticeBlock
+                activity={data.miniActivity}
+                onCorrect={() => {
+                  setShowReward(true);
+                  setTimeout(() => setShowReward(false), 1300);
+                }}
+              />
+            </ComicPanel>
+          </div>
         )}
 
         {availablePanels >= 4 && (
-          <ComicPanel variant="focus" delay={0.16}>
-            <h3 className="text-base font-black text-gray-900">Power Words</h3>
-            <p className="text-xs font-semibold text-gray-700">
-              Tap a word to hear pronunciation
-            </p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {data.vocabularyTargets.map((word) => (
-                <WordHighlight key={word} word={word} onClick={speakWord} />
-              ))}
-            </div>
-            <p className="mt-3 rounded-xl bg-emerald-100 px-3 py-2 text-sm font-bold text-emerald-900">
-              {data.feedbackText}
-            </p>
-          </ComicPanel>
+          <div
+            ref={(el) => {
+              panelRefs.current[3] = el;
+            }}
+          >
+            <ComicPanel variant="focus" delay={0.16}>
+              <h3 className="text-base font-black text-gray-900">
+                Power Words
+              </h3>
+              <p className="text-xs font-semibold text-gray-700">
+                Tap a word to hear pronunciation
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {data.vocabularyTargets.map((word) => (
+                  <WordHighlight key={word} word={word} onClick={speakWord} />
+                ))}
+              </div>
+              <p className="mt-3 rounded-xl bg-emerald-100 px-3 py-2 text-sm font-bold text-emerald-900">
+                {data.feedbackText}
+              </p>
+            </ComicPanel>
+          </div>
         )}
       </div>
 

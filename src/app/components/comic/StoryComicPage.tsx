@@ -55,6 +55,20 @@ function normalizeWord(raw: string) {
   );
 }
 
+function getScrollableParent(el: HTMLElement | null): HTMLElement | null {
+  if (!el) return null;
+  let current: HTMLElement | null = el.parentElement;
+  while (current) {
+    const style = window.getComputedStyle(current);
+    const canScrollY = /(auto|scroll)/.test(style.overflowY);
+    if (canScrollY && current.scrollHeight > current.clientHeight) {
+      return current;
+    }
+    current = current.parentElement;
+  }
+  return null;
+}
+
 function SpeechBubble({
   character,
   text,
@@ -231,13 +245,22 @@ export default function StoryComicPage({ page }: StoryComicPageProps) {
 
     // Wait a tick so the newly revealed panel has final layout before scrolling.
     const scrollTimer = window.setTimeout(() => {
-      nextPanel.scrollIntoView({
-        behavior,
-        block: "start",
-        inline: "nearest",
-      });
+      const scroller = getScrollableParent(nextPanel);
+      if (scroller) {
+        const scrollerRect = scroller.getBoundingClientRect();
+        const panelRect = nextPanel.getBoundingClientRect();
+        const currentTop = scroller.scrollTop;
+        const targetTop = currentTop + (panelRect.top - scrollerRect.top) - 8;
+        scroller.scrollTo({ top: Math.max(0, targetTop), behavior });
+      } else {
+        nextPanel.scrollIntoView({
+          behavior,
+          block: "start",
+          inline: "nearest",
+        });
+      }
       nextPanel.focus({ preventScroll: true });
-    }, 40);
+    }, 60);
 
     const pulseTimer = window.setTimeout(() => {
       setFocusPulsePanel(null);

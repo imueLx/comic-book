@@ -19,6 +19,7 @@ export default function ComicBookApp({ onBack }: ComicBookAppProps) {
   const [showCompletion, setShowCompletion] = useState(false);
   const totalPages = comicPages.length;
   const page = comicPages[currentPage - 1];
+  const contentScrollRef = useRef<HTMLDivElement | null>(null);
 
   // Swipe gesture support
   const touchStartX = useRef<number | null>(null);
@@ -63,6 +64,10 @@ export default function ComicBookApp({ onBack }: ComicBookAppProps) {
     },
     [goNext, goPrev],
   );
+
+  useEffect(() => {
+    contentScrollRef.current?.scrollTo({ top: 0, behavior: "auto" });
+  }, [currentPage]);
 
   return (
     <main
@@ -110,7 +115,10 @@ export default function ComicBookApp({ onBack }: ComicBookAppProps) {
       </header>
 
       {/* Content Area */}
-      <div className="flex-1 flex flex-col items-center justify-start sm:justify-center px-2 sm:px-4 py-3 sm:py-6 max-w-3xl mx-auto w-full overflow-y-auto">
+      <div
+        ref={contentScrollRef}
+        className="flex-1 flex flex-col items-center justify-start sm:justify-center px-2 sm:px-4 py-3 sm:py-6 max-w-3xl mx-auto w-full overflow-y-auto"
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={currentPage}
